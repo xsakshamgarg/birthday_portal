@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Archive of Us — Phase 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   PHASE 2 — THE ARCHIVE OF US
+   Theme: Velvet Blossom (Cherry Blossom Night × Rose Gold Diary)
+   Art direction: deep plum-navy night sky, blossom-pink glow, rose-gold shimmer
+═══════════════════════════════════════════════ */
+:root{
+  /* Velvet Blossom palette */
+  --bg:         #0d0a1a;
+  --surface:    #1c1830;
+  --surface-2:  #251f3d;
+  --surface-3:  #2e2850;
+  --blossom:    #e8a0bf;
+  --blossom-d:  #c9607e;
+  --gold:       #c9a96e;
+  --gold-d:     #a07840;
+  --mauve:      #c77dff;
+  --mauve-d:    #9b4de0;
+  --teal:       #4ecdc4;
+  --teal-d:     #2aaa9f;
+  --text:       #f0e6f6;
+  --text-muted: #9b8ab0;
+  --text-faint: #5a4d6e;
+  --card:       rgba(28,24,56,0.85);
+  --card-2:     rgba(37,31,61,0.9);
+  --shadow:     rgba(0,0,0,0.45);
+  --shadow-pk:  rgba(232,160,191,0.18);
+  --border:     rgba(232,160,191,0.15);
+  --font-head:  'Cormorant Garamond', Georgia, serif;
+  --font-body:  'DM Sans', system-ui, sans-serif;
+  --font-pixel: 'Press Start 2P', monospace;
+  --radius:     20px;
+  --gap:        18px;
+  --trans:      180ms cubic-bezier(0.16,1,0.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh; font-family:var(--font-body); color:var(--text);
+  background:var(--bg);
+  overflow-x:hidden;
+}
+/* Ambient star-field background */
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(199,125,255,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(232,160,191,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(201,169,110,0.06) 0%, transparent 70%);
+}
+/* scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--blossom-d);border-radius:4px}
+
+/* ── Petals ──────────────────────────────────────── */
+.petal{
+  position:fixed; top:-20px; font-size:14px; pointer-events:none;
+  z-index:1; animation:petal-fall linear infinite; opacity:0.55;
+}
+@keyframes petal-fall{
+  0%  {transform:translateY(0) rotate(0deg) translateX(0);  opacity:.55}
+  50% {transform:translateY(50vh) rotate(180deg) translateX(20px); opacity:.35}
+  100%{transform:translateY(105vh) rotate(360deg) translateX(-10px); opacity:0}
+}
+
+/* ── Thumbnail strip ─────────────────────────────── */
+#thumb-strip-left, #thumb-strip-right{
+  position:fixed; top:14px; z-index:800;
+  display:flex; gap:8px; flex-wrap:wrap; max-width:240px;
+}
+#thumb-strip-left{left:14px; justify-content:flex-start}
+#thumb-strip-right{right:14px; justify-content:flex-end}
+.thumb{
+  width:88px; height:88px; border-radius:12px; overflow:hidden;
+  border:3px solid rgba(232,160,191,0.5);
+  box-shadow:0 6px 20px var(--shadow), 0 0 0 1px rgba(232,160,191,0.1);
+  transition:transform var(--trans); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; background:var(--surface-2);
+}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb.disaster{border-color:#ff8fa3; background:rgba(255,100,120,0.15)}
+.thumb.banger  {border-color:var(--teal); background:rgba(78,205,196,0.1)}
+.thumb:hover{transform:scale(1.15)}
+
+/* ── Video player modal ───────────────────────────── */
+#video-player-overlay{
+  position:fixed; inset:0; z-index:950;
+  background:rgba(8,5,20,.92); backdrop-filter:blur(10px);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+#video-player-overlay.open{display:flex}
+.video-player-box{
+  width:min(100%,720px); position:relative;
+}
+.video-player-box video{
+  width:100%; max-height:80vh; border-radius:16px; background:#000; display:block;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+}
+.video-player-close{
+  position:absolute; top:-44px; right:0;
+  background:var(--surface-2); border:1px solid var(--border);
+  color:var(--text); font-size:22px; line-height:1; cursor:pointer;
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:background var(--trans), color var(--trans);
+}
+.video-player-close:hover{background:rgba(232,160,191,0.15); color:var(--blossom)}
+
+/* ── Photo viewer modal ───────────────────────────── */
+#photo-viewer-overlay{
+  position:fixed; inset:0; z-index:950;
+  background:rgba(8,5,20,.92); backdrop-filter:blur(10px);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+#photo-viewer-overlay.open{display:flex}
+.photo-viewer-box{position:relative; max-width:90vw; max-height:90vh}
+.photo-viewer-box img{
+  max-width:90vw; max-height:90vh; border-radius:16px; display:block;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+}
+.photo-viewer-close{
+  position:absolute; top:-44px; right:0;
+  background:var(--surface-2); border:1px solid var(--border);
+  color:var(--text); font-size:22px; line-height:1; cursor:pointer;
+  width:40px; height:40px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:background var(--trans), color var(--trans);
+}
+.photo-viewer-close:hover{background:rgba(232,160,191,0.15); color:var(--blossom)}
+
+/* ── Hub screen ──────────────────────────────────── */
+#hub{
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:40px 24px; position:relative; z-index:1;
+}
+.hub-title{
+  font-family:var(--font-head); font-size:clamp(28px,5vw,52px);
+  font-style:italic; font-weight:600;
+  text-align:center; line-height:1.2; margin-bottom:8px;
+  color:var(--blossom);
+  text-shadow: 0 0 40px rgba(232,160,191,0.4);
+}
+.hub-sub{
+  color:var(--text-muted); font-size:16px; text-align:center;
+  margin-bottom:48px; max-width:500px;
+}
+
+/* folder cluster */
+.folder-cluster{
+  display:flex; flex-wrap:wrap; gap:20px;
+  justify-content:center; max-width:820px; margin-bottom:48px;
+}
+.folder-item{
+  display:flex; flex-direction:column; align-items:center;
+  gap:10px; cursor:pointer; transition:transform var(--trans); width:140px;
+}
+.folder-item:hover .folder-body{
+  transform:translateY(-6px);
+  box-shadow:0 20px 44px var(--shadow), 0 0 24px var(--shadow-pk);
+}
+.folder-body{
+  width:120px; height:90px; border-radius:0 16px 16px 16px;
+  background:linear-gradient(145deg, rgba(201,169,110,0.8), rgba(199,125,255,0.6));
+  box-shadow:0 12px 28px var(--shadow);
+  position:relative; transition:transform var(--trans), box-shadow var(--trans);
+  display:flex; align-items:center; justify-content:center; font-size:32px;
+  border:1px solid var(--border);
+}
+.folder-body::before{
+  content:''; position:absolute; left:0; top:-18px;
+  width:54px; height:22px; border-radius:10px 10px 0 0;
+  background:inherit; filter:brightness(1.15);
+}
+.folder-body .f-lock{
+  position:absolute; bottom:-8px; right:-8px;
+  width:28px; height:28px; border-radius:50%;
+  background:var(--surface-2);
+  box-shadow:0 4px 10px var(--shadow);
+  border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.folder-label{
+  font-weight:700; font-size:13px; text-align:center;
+  color:var(--text); line-height:1.35;
+}
+.folder-item.completed .folder-body{
+  background:linear-gradient(145deg,rgba(78,205,196,0.55),rgba(201,169,110,0.45));
+}
+.folder-item.completed .f-lock::after{content:'✅'; font-size:12px}
+
+/* vault */
+.vault-arrow{
+  display:flex; flex-direction:column; align-items:center;
+  gap:6px; color:var(--gold); font-size:13px; font-weight:700; margin-top:-20px;
+}
+.vault-arrow svg{animation:bounce-arrow 1.4s ease-in-out infinite}
+@keyframes bounce-arrow{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.vault-folder{
+  width:160px; height:110px; border-radius:0 20px 20px 20px;
+  background:linear-gradient(145deg,var(--gold),var(--blossom-d));
+  display:flex; align-items:center; justify-content:center;
+  font-size:42px; cursor:pointer;
+  box-shadow:0 16px 40px rgba(201,169,110,0.35);
+  position:relative; transition:transform var(--trans), box-shadow var(--trans);
+}
+.vault-folder::before{
+  content:''; position:absolute; left:0; top:-22px;
+  width:64px; height:26px; border-radius:12px 12px 0 0; background:inherit;
+}
+.vault-folder:hover{
+  transform:translateY(-6px);
+  box-shadow:0 24px 52px rgba(201,169,110,0.5);
+}
+.vault-folder.vault-locked{filter:grayscale(.7) brightness(0.6); cursor:not-allowed}
+
+/* ── Modal overlay ───────────────────────────────── */
+#modal-overlay{
+  position:fixed; inset:0; z-index:900;
+  background:rgba(8,5,20,.82); backdrop-filter:blur(10px);
+  display:none; align-items:center; justify-content:center; padding:16px;
+}
+#modal-overlay.open{display:flex}
+.modal-box{
+  width:min(100%,860px); max-height:92vh;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:28px;
+  box-shadow:0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(232,160,191,0.08);
+  overflow:hidden; display:flex; flex-direction:column;
+  animation:modal-in .35s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modal-in{from{opacity:0;transform:scale(.92) translateY(24px)}to{opacity:1;transform:none}}
+.modal-header{
+  padding:18px 24px; border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  background:rgba(13,10,26,0.6); backdrop-filter:blur(12px); flex-shrink:0;
+}
+.modal-title{
+  font-family:var(--font-head); font-size:22px; line-height:1.2;
+  font-style:italic; color:var(--blossom);
+}
+.modal-close{
+  background:none; border:none; cursor:pointer; font-size:22px;
+  color:var(--text-muted); padding:4px 8px; border-radius:8px;
+  transition:background var(--trans), color var(--trans);
+}
+.modal-close:hover{background:rgba(232,160,191,0.12); color:var(--text)}
+.modal-body{flex:1; overflow-y:auto; padding:28px 24px; position:relative; z-index:1;}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--blossom-d);border-radius:4px}
+.modal-footer{
+  padding:16px 24px; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  flex-shrink:0; background:rgba(13,10,26,0.5);
+}
+.score-display{font-weight:700; color:var(--gold); font-size:14px}
+.btn{
+  padding:12px 26px; border:none; border-radius:14px; cursor:pointer;
+  font:700 15px var(--font-body); transition:opacity var(--trans), transform var(--trans), box-shadow var(--trans);
+}
+.btn:hover{opacity:.88; transform:translateY(-2px)}
+.btn:active{transform:none}
+.btn-primary{
+  background:linear-gradient(135deg, var(--blossom-d), var(--mauve-d));
+  color:#fff;
+  box-shadow:0 4px 18px rgba(199,125,255,0.3);
+}
+.btn-ghost{
+  background:rgba(232,160,191,0.12);
+  color:var(--blossom);
+  border:1px solid var(--border);
+}
+.btn:disabled{opacity:.35; cursor:not-allowed; transform:none}
+
+/* completion banner */
+.completion-banner{
+  display:none; flex-direction:column; align-items:center;
+  text-align:center; padding:40px 24px; gap:14px;
+}
+.completion-banner.show{display:flex}
+.completion-banner .big-emoji{font-size:64px}
+.completion-banner h3{
+  font-family:var(--font-head); font-size:28px;
+  font-style:italic; color:var(--blossom);
+}
+.completion-banner p{color:var(--text-muted); max-width:400px; line-height:1.6}
+
+/* ── GAME: This or That ──────────────────────────── */
+.tot-arena{
+  display:flex; align-items:center; justify-content:center;
+  gap:24px; flex-wrap:wrap; min-height:340px;
+}
+.tot-card{
+  width:min(42%,280px); border-radius:var(--radius); overflow:hidden;
+  cursor:pointer; position:relative;
+  transition:transform var(--trans), box-shadow var(--trans);
+  box-shadow:0 12px 32px var(--shadow), 0 0 0 1px var(--border);
+  background:var(--card); display:flex; flex-direction:column;
+}
+.tot-card:hover{transform:scale(1.04); box-shadow:0 20px 48px var(--shadow), 0 0 20px var(--shadow-pk)}
+.tot-card .tot-img-wrap{
+  position:relative; width:100%; aspect-ratio:3/4;
+  background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center;
+}
+.tot-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tot-card .ph{font-size:48px; position:relative; z-index:1}
+.tot-card .card-label{
+  padding:10px 12px;
+  background:rgba(13,10,26,0.75); backdrop-filter:blur(8px);
+  color:var(--text); font-weight:700; font-size:14px;
+  text-align:center; z-index:2; flex-shrink:0;
+  border-top:1px solid var(--border);
+}
+.tot-card.chosen{outline:3px solid var(--blossom); transform:scale(1.06)}
+.tot-card.unchosen{opacity:.35; transform:scale(.94); filter:grayscale(.6)}
+.tot-divider{font-size:36px; flex-shrink:0; color:var(--gold)}
+.tot-heart{
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-size:56px; z-index:10; pointer-events:none;
+  animation:heart-pop .5s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes heart-pop{0%{transform:translate(-50%,-50%) scale(0);opacity:1}60%{transform:translate(-50%,-50%) scale(1.3)}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.round-tag{
+  text-align:center; color:var(--gold); font-size:13px;
+  font-weight:700; margin-bottom:18px;
+  letter-spacing:.06em; text-transform:uppercase;
+}
+
+/* ── GAME: Disaster or Banger ────────────────────── */
+.dob-arena{
+  position:relative; display:flex; align-items:center;
+  justify-content:center; gap:20px; min-height:380px;
+}
+.dob-card{
+  width:min(100%,320px); aspect-ratio:3/4;
+  border-radius:24px; overflow:hidden;
+  position:relative; cursor:grab; user-select:none;
+  box-shadow:0 20px 52px var(--shadow), 0 0 0 1px var(--border);
+  background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center;
+  transition:box-shadow var(--trans);
+}
+.dob-card.dragging{cursor:grabbing; box-shadow:0 32px 80px var(--shadow), 0 0 30px var(--shadow-pk)}
+.dob-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dob-card .ph{font-size:56px; position:relative; z-index:1}
+.dob-hint{
+  position:absolute; bottom:-60px; left:0; right:0;
+  display:flex; justify-content:space-between; padding:0 16px; pointer-events:none;
+}
+.dob-hint span{font-weight:700; font-size:13px; opacity:.6; display:flex; align-items:center; gap:6px; color:var(--text-muted)}
+.swipe-label{
+  position:absolute; top:20px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-pixel); font-size:14px; font-weight:700;
+  padding:8px 22px; border-radius:12px; opacity:0;
+  transition:opacity .15s; pointer-events:none; z-index:5; white-space:nowrap;
+}
+.swipe-label.disaster{background:#c0365a; color:#fff}
+.swipe-label.banger  {background:var(--teal-d); color:#fff}
+.swipe-label.show    {opacity:1}
+.dob-bg-hint{
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-size:80px; opacity:0; pointer-events:none; transition:opacity .15s;
+}
+.dob-bg-hint.left{left:20px}.dob-bg-hint.right{right:20px}
+.dob-bg-hint.show{opacity:.35}
+.dob-actions{display:flex; flex-direction:column; gap:14px; flex-shrink:0}
+.dob-side-btn{
+  width:64px; height:64px; border-radius:50%; border:none; cursor:pointer;
+  font-size:26px; display:flex; align-items:center; justify-content:center;
+  transition:transform var(--trans), box-shadow var(--trans);
+  box-shadow:0 8px 20px var(--shadow);
+}
+.dob-side-btn:hover{transform:scale(1.1)}
+.dob-side-btn.dob-disaster-btn{background:rgba(192,54,90,0.25); color:#ff8fa3; border:1px solid rgba(255,100,120,0.35)}
+.dob-side-btn.dob-banger-btn{background:rgba(78,205,196,0.2); color:var(--teal); border:1px solid rgba(78,205,196,0.35)}
+@media (max-width:600px){
+  .dob-arena{flex-direction:column}
+  .dob-actions{flex-direction:row}
+}
+
+/* ── GAME: Match The Following ───────────────────── */
+.match-grid{display:flex; flex-direction:column; gap:10px}
+.match-pair-row{display:flex; align-items:center; gap:10px}
+.match-pair-row .match-left-item{flex:1; min-width:0}
+.match-pair-row .match-right-item{flex:1; min-width:0}
+.match-pair-divider{font-size:18px; flex-shrink:0; color:var(--gold); user-select:none}
+.match-col-head{display:none}
+.match-left-item{
+  border-radius:14px; overflow:hidden; padding:0;
+  background:transparent; border:none;
+  box-shadow:0 4px 14px var(--shadow);
+  display:block;
+}
+.match-left-item img{
+  width:40%; aspect-ratio:1/1; border-radius:14px;
+  object-fit:cover; display:block;
+  border:3px solid rgba(232,160,191,0.45);
+}
+.match-left-item .ph{
+  aspect-ratio:1/1; border-radius:14px; width:40%;
+  font-size:48px; display:flex; align-items:center; justify-content:center;
+  background:rgba(232,160,191,0.08); border:3px solid rgba(232,160,191,0.25);
+}
+.match-right-item{
+  border-radius:14px; overflow:hidden; padding:0;
+  background:transparent; border:none;
+  display:block; cursor:grab; user-select:none;
+  transition:box-shadow var(--trans), transform .1s;
+  touch-action:none;
+  box-shadow:0 4px 14px var(--shadow);
+}
+.match-right-item:hover{box-shadow:0 8px 24px var(--shadow), 0 0 12px var(--shadow-pk); transform:scale(1.03)}
+.match-right-item img{
+  width:40%; aspect-ratio:1/1; border-radius:14px;
+  object-fit:cover; display:block;
+  border:3px solid rgba(199,125,255,0.45);
+}
+.match-right-item .ph{
+  aspect-ratio:1/1; border-radius:14px; width:40%;
+  font-size:48px; display:flex; align-items:center; justify-content:center;
+  background:rgba(199,125,255,0.08); border:3px solid rgba(199,125,255,0.25);
+}
+.match-drag-handle{display:none}
+.match-right-item.is-dragging{opacity:0; pointer-events:none}
+.match-right-item.drag-placeholder{
+  background:rgba(232,160,191,0.08) !important;
+  border:2px dashed var(--blossom) !important;
+  opacity:.4; border-radius:14px; aspect-ratio:1/1;
+}
+.match-correct img{border-color:var(--teal) !important; animation:correct-flash-border .5s ease forwards}
+.match-correct .ph{border-color:var(--teal) !important}
+@keyframes correct-flash-border{0%,100%{border-color:var(--teal)}50%{border-color:#a8f0e0}}
+@keyframes correct-flash{0%,100%{background:rgba(78,205,196,0.15)}50%{background:rgba(78,205,196,0.35)}}
+.match-check{text-align:center; font-size:72px; margin:20px 0; display:none}
+.match-check.show{display:block; animation:pop-in .4s cubic-bezier(.22,1,.36,1)}
+@keyframes pop-in{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── GAME: Rate The Experience ───────────────────── */
+.rate-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px}
+.rate-card{
+  border-radius:var(--radius); overflow:hidden;
+  background:var(--card); box-shadow:0 8px 24px var(--shadow), 0 0 0 1px var(--border);
+  display:flex; flex-direction:column;
+}
+.rate-card-img{
+  width:100%; aspect-ratio:4/3;
+  background:linear-gradient(135deg,rgba(232,160,191,0.2),rgba(199,125,255,0.2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:40px; overflow:hidden;
+}
+.rate-card-img img{width:100%;height:100%;object-fit:cover}
+.rate-card-body{padding:12px}
+.rate-label{font-weight:700; font-size:13px; margin-bottom:8px; color:var(--blossom)}
+.star-row{display:flex; gap:4px}
+.star{font-size:22px; cursor:pointer; transition:transform var(--trans),color .1s; color:var(--text-faint); line-height:1}
+.star.active{color:var(--gold)}
+.star.hovered{color:var(--gold); transform:scale(1.15)}
+.rate-done-thumb{
+  width:44px; height:44px; border-radius:8px; overflow:hidden;
+  background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.rate-done-thumb img{width:100%;height:100%;object-fit:cover}
+.round-progress{text-align:center; color:var(--gold); font-size:13px; font-weight:700; margin-bottom:16px}
+
+/* ── GAME: True or False ─────────────────────────── */
+.tof-card{
+  border-radius:var(--radius); overflow:hidden;
+  background:var(--card); box-shadow:0 12px 32px var(--shadow), 0 0 0 1px var(--border);
+  margin-bottom:20px;
+}
+.tof-top{display:flex; align-items:center; gap:14px; padding:18px 22px 0}
+.tof-emoji-small{
+  width:56px; height:56px; flex-shrink:0; border-radius:14px;
+  background:linear-gradient(135deg,rgba(232,160,191,0.2),rgba(199,125,255,0.2));
+  display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden;
+}
+.tof-emoji-small img{width:100%;height:100%;object-fit:cover}
+.tof-body{padding:14px 22px 22px}
+.tof-q{font-family:var(--font-head); font-size:20px; font-style:italic; line-height:1.4; margin-bottom:18px; color:var(--text)}
+.tof-btns{display:flex; gap:14px}
+.tof-btn{
+  flex:1; padding:14px; border:1.5px solid transparent; border-radius:14px;
+  font:700 16px var(--font-body); cursor:pointer; transition:.18s;
+}
+.tof-btn-t{background:rgba(78,205,196,0.1); color:var(--teal); border-color:rgba(78,205,196,0.35)}
+.tof-btn-f{background:rgba(232,160,191,0.1); color:var(--blossom); border-color:var(--border)}
+.tof-btn:hover{filter:brightness(1.15); transform:translateY(-2px)}
+.tof-btn.correct{background:rgba(78,205,196,0.25); border-color:var(--teal); color:var(--teal)}
+.tof-btn.wrong  {background:rgba(192,54,90,0.2); border-color:#ff8fa3; color:#ff8fa3}
+.tof-btn:disabled{cursor:default; transform:none}
+.timer-bar-wrap{height:8px; background:var(--surface-3); border-radius:4px; margin-bottom:16px; overflow:hidden}
+.timer-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--blossom-d),var(--mauve));
+  border-radius:4px; width:100%; transform-origin:left center; transition:width 1s linear;
+}
+.timer-label{
+  font-family:var(--font-pixel); font-size:16px; text-align:center;
+  color:var(--blossom); margin-bottom:8px;
+}
+.tof-result{
+  margin-top:16px; font-weight:600; font-size:15px; min-height:20px;
+  display:none; padding:20px 22px; border-radius:16px;
+  background:var(--card-2); box-shadow:0 12px 32px var(--shadow);
+  line-height:1.6; border:1px solid var(--border);
+}
+.tof-result.show{display:block; animation:result-pop .4s cubic-bezier(.22,1,.36,1)}
+@keyframes result-pop{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.tof-result.correct-result{border-color:var(--teal); background:rgba(78,205,196,0.08)}
+.tof-result.wrong-result{border-color:#ff8fa3; background:rgba(192,54,90,0.08)}
+.tof-result .result-verdict{font-size:22px; margin-bottom:6px; display:block}
+.tof-result .result-explain{font-size:14px; color:var(--text-muted); font-weight:500; display:block; margin-top:4px}
+
+/* ── GAME: Chaos Meter ───────────────────────────── */
+.chaos-card{
+  border-radius:var(--radius); overflow:hidden;
+  background:var(--card); box-shadow:0 12px 32px var(--shadow), 0 0 0 1px var(--border);
+  margin-bottom:20px;
+}
+.chaos-img-wrap{
+  width:100%; aspect-ratio:16/9; max-height:220px;
+  background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; font-size:56px; overflow:hidden;
+}
+.chaos-img-wrap img{width:100%;height:100%;object-fit:cover}
+.chaos-body{padding:18px 22px 24px}
+.chaos-q{
+  font-family:var(--font-head); font-size:18px; font-style:italic;
+  line-height:1.4; margin-bottom:20px; color:var(--text);
+}
+.chaos-slider-wrap{position:relative; padding:0 0 36px}
+.chaos-slider{
+  width:100%; -webkit-appearance:none; appearance:none;
+  height:10px; border-radius:5px; outline:none; cursor:pointer;
+  background:linear-gradient(90deg, var(--teal), var(--blossom-d), var(--mauve));
+}
+.chaos-slider::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none;
+  width:28px; height:28px; border-radius:50%;
+  background:var(--surface-2); border:3px solid var(--blossom);
+  box-shadow:0 4px 12px var(--shadow), 0 0 8px rgba(232,160,191,0.4);
+  cursor:pointer; transition:transform var(--trans);
+}
+.chaos-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.chaos-labels{
+  display:flex; justify-content:space-between;
+  font-size:11px; color:var(--text-muted);
+  margin-top:8px; font-weight:600;
+}
+.chaos-value{
+  text-align:center; font-family:var(--font-pixel);
+  font-size:13px; color:var(--blossom); margin-top:12px; min-height:20px;
+}
+.chaos-submit{margin-top:18px}
+.chaos-result{
+  margin-top:14px; display:none; padding:16px 20px;
+  border-radius:14px; background:var(--card-2);
+  border:1px solid var(--border); font-size:14px; color:var(--text-muted); line-height:1.6;
+}
+.chaos-result.show{display:block; animation:result-pop .3s ease}
+.chaos-result strong{color:var(--blossom)}
+
+/* ── Chaos Meter: actual structure used by render() ── */
+.chaos-scene{display:flex; flex-direction:column; align-items:center; gap:20px}
+.chaos-img{
+  width:min(100%,340px); aspect-ratio:3/2; border-radius:var(--radius);
+  overflow:hidden; background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; font-size:56px;
+  box-shadow:0 12px 32px var(--shadow), 0 0 0 1px var(--border);
+}
+.chaos-img img{width:100%;height:100%;object-fit:cover}
+.chaos-context{
+  font-family:var(--font-head); font-style:italic; font-size:19px;
+  text-align:center; max-width:460px; line-height:1.5; color:var(--text);
+}
+.gauge-wrap{
+  width:min(100%,420px); padding:22px;
+  background:var(--card-2); border-radius:var(--radius);
+  box-shadow:0 8px 24px var(--shadow); border:1px solid var(--border);
+}
+.gauge-labels{
+  display:flex; justify-content:space-between;
+  font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:10px;
+}
+.gauge-track{
+  position:relative; height:52px; border-radius:26px; overflow:hidden; cursor:pointer;
+  background:linear-gradient(90deg, var(--teal), var(--gold) 50%, var(--blossom-d));
+}
+.gauge-fill{
+  position:absolute; top:0; right:0; bottom:0;
+  background:rgba(13,10,26,.45); border-radius:0 26px 26px 0; pointer-events:none; transition:width .1s;
+}
+.gauge-thumb{
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  width:44px; height:44px; border-radius:50%; background:var(--surface-2);
+  box-shadow:0 4px 16px var(--shadow), 0 0 8px rgba(232,160,191,.4);
+  border:3px solid var(--blossom);
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+  pointer-events:none; transition:left .1s;
+}
+.gauge-value-label{
+  text-align:center; font-weight:700; font-size:15px; color:var(--blossom); margin-top:14px;
+}
+
+/* ── GAME: Video Gallery ──────────────────────────── */
+.vgallery-grid{
+  display:grid; gap:12px; grid-template-columns:repeat(3,1fr);
+  grid-auto-rows:120px;
+}
+.vgallery-tile{
+  position:relative; border-radius:16px; overflow:hidden; cursor:pointer;
+  background:var(--surface-2);
+  box-shadow:0 8px 24px var(--shadow), 0 0 0 1px var(--border);
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .2s, box-shadow .2s;
+}
+.vgallery-tile:hover{transform:scale(1.03); box-shadow:0 16px 36px var(--shadow), 0 0 0 1px var(--blossom)}
+.vgallery-tile video{width:100%; height:100%; object-fit:cover; pointer-events:none; display:block}
+.vgallery-tile .ph{font-size:32px}
+.vgallery-tile .play-badge{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(13,10,26,.28); font-size:26px; color:#fff; transition:background .2s;
+}
+.vgallery-tile:hover .play-badge{background:rgba(13,10,26,.45)}
+.vgallery-tile.watched .play-badge::after{
+  content:'✓'; position:absolute; top:6px; right:6px; font-size:12px;
+  background:var(--teal); color:#0d0a1a; border-radius:50%;
+  width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.vgallery-tile.shape-sq{grid-row:span 1; grid-column:span 1}
+.vgallery-tile.shape-wide{grid-row:span 1; grid-column:span 2}
+.vgallery-tile.shape-tall{grid-row:span 2; grid-column:span 1}
+@media (max-width:600px){
+  .vgallery-grid{grid-template-columns:repeat(2,1fr); grid-auto-rows:110px}
+  .vgallery-tile.shape-wide{grid-column:span 2}
+}
+
+/* ── Reward Vault ────────────────────────────────── */
+#vault-screen{position:relative; z-index:1}
+.vault-title{
+  font-family:var(--font-head); font-size:clamp(24px,4vw,42px);
+  font-style:italic; text-align:center; color:var(--blossom);
+  text-shadow:0 0 30px rgba(232,160,191,0.4);
+  margin-bottom:12px;
+}
+.vault-sub{color:var(--text-muted); text-align:center; font-size:16px; margin-bottom:36px}
+.rewards-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px; max-width:800px; margin:0 auto 40px;
+}
+.reward-card{
+  border-radius:var(--radius); overflow:hidden;
+  background:var(--card); box-shadow:0 12px 32px var(--shadow), 0 0 0 1px var(--border);
+  display:flex; flex-direction:column; animation:modal-in .4s ease;
+}
+.reward-img{
+  width:100%; aspect-ratio:4/3;
+  background:linear-gradient(135deg,rgba(201,169,110,0.2),rgba(232,160,191,0.2));
+  display:flex; align-items:center; justify-content:center; font-size:44px; overflow:hidden;
+}
+.reward-img img{width:100%;height:100%;object-fit:cover}
+.reward-body{padding:16px}
+.reward-title{font-family:var(--font-head); font-size:17px; font-style:italic; color:var(--blossom); margin-bottom:6px}
+.reward-desc{font-size:13px; color:var(--text-muted); line-height:1.6}
+.back-btn{
+  display:flex; align-items:center; gap:8px;
+  color:var(--text-muted); background:none; border:none; cursor:pointer;
+  font-size:14px; font-weight:700; padding:4px 0; margin-bottom:24px;
+  transition:color var(--trans);
+}
+.back-btn:hover{color:var(--blossom)}
+
+/* ── Confetti / extras ───────────────────────────── */
+.confetti-piece{
+  position:fixed; top:-10px; z-index:9999; pointer-events:none;
+  width:8px; height:8px; border-radius:2px;
+  animation:confetti-fall 3s ease-in forwards;
+}
+@keyframes confetti-fall{
+  0%  {transform:translateY(0) rotate(0deg); opacity:1}
+  100%{transform:translateY(110vh) rotate(720deg); opacity:0}
+}
+
+/* shared utilities */
+.hidden{display:none!important}
+.fade-in{animation:fade-in .3s ease forwards}
+@keyframes fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<script>
+(function(){
+  var petals=['🌸','🌺','✿','❀','🌷'];
+  for(var i=0;i<14;i++){
+    var p=document.createElement('span');
+    p.className='petal';
+    p.textContent=petals[i%petals.length];
+    p.style.left=Math.random()*100+'vw';
+    p.style.animationDuration=(8+Math.random()*10)+'s';
+    p.style.animationDelay=(Math.random()*12)+'s';
+    p.style.fontSize=(10+Math.random()*10)+'px';
+    document.body.appendChild(p);
+  }
+})();
+</script>
+
+
+
+<!-- Thumbnail strips: selected items appear here, distributed both sides -->
+<div id="thumb-strip-left"></div>
+<div id="thumb-strip-right"></div>
+
+<!-- Video player modal -->
+<div id="video-player-overlay" onclick="if(event.target===this) closeVideoPlayer()">
+  <div class="video-player-box">
+    <button class="video-player-close" onclick="closeVideoPlayer()">✕</button>
+    <video id="video-player-el" controls autoplay></video>
+  </div>
+</div>
+
+<!-- Photo viewer modal -->
+<div id="photo-viewer-overlay" onclick="if(event.target===this) closePhotoViewer()">
+  <div class="photo-viewer-box">
+    <button class="photo-viewer-close" onclick="closePhotoViewer()">✕</button>
+    <img id="photo-viewer-img" src="" alt="">
+  </div>
+</div>
+
+<!-- ═══════════ HUB SCREEN ═══════════ -->
+<div id="hub">
+  <h1 class="hub-title">The Archive of Us 📁</h1>
+  <p class="hub-sub">Three years. Open any folder to begin. Complete all to unlock the Reward Vault.</p>
+
+  <div class="folder-cluster" id="folder-cluster">
+    <!-- Folders are rendered by JS from PHASE2_CONFIG -->
+  </div>
+
+  <div class="vault-arrow">
+    <span>Complete all folders to unlock</span>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+    <div class="vault-folder vault-locked" id="vault-folder" onclick="tryOpenVault()">🎁</div>
+    <span id="vault-label">🔒 Locked</span>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL ═══════════ -->
+<div id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Game</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <div class="score-display" id="modal-score"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" id="btn-prev" onclick="gamePrev()" style="display:none">← Prev</button>
+        <button class="btn btn-primary" id="btn-next" onclick="gameNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE2_CONFIG — Edit everything here. No other file needs changing.
+
+   HOW TO ADD MORE ROUNDS TO ANY GAME:
+   - This or That:      add objects to the `rounds` array in "thisorthat"
+   - Disaster/Banger:   add objects to the `cards` array in "disasterbanger"
+   - Match Following:   add objects to `pairs` in "matchfollowing"
+   - Rate Experience:   add rounds (arrays of items) to `rounds` in "rateexp"
+   - True or False:     add objects to `questions` in "truefalse"
+   - Chaos Meter:       add objects to `incidents` in "chaosmeter"
+   - Photo Reveal:      add photos to `photos` array in each reveal folder
+
+   HOW TO ADD A PHOTO:
+   Put the image file inside an  assets/  folder next to this HTML file.
+   Then set  src: "assets/your-photo.jpg"
+   Leave  src: null  to show an emoji placeholder instead.
+
+   HOW TO ADD MORE FOLDERS:
+   Copy any folder object and paste it into the `folders` array.
+   Use a new unique `id`. Set `gameType` to one of the existing game types.
+═══════════════════════════════════════════════════════════════════ */
+const PHASE2_CONFIG = {
+
+  folders: [
+
+    /* ══ FOLDER 1: THIS OR THAT ══════════════════════════════ */
+    {
+      id: "thisorthat",
+      label: "This or That\n⚡ Warm Up",
+      icon: "⚡",
+      gameType: "thisorthat",
+      content: {
+        title: "This or That ⚡",
+        subtitle: "What did you enjoy more? Tap to choose.",
+        /*
+         * HOW TO ADD ROUNDS:
+         * Copy one object below and paste it into this array.
+         * Each round has two options: left and right.
+         * src: null → shows emoji placeholder
+         * src: "assets/photo.jpg" → shows your photo
+         */
+        rounds: [
+          {
+            left:  { src: "assets/IMG_2125.jpeg", label: "BBQN Visit 1" },
+            right: { src: "assets/IMG_0897.jpg", label: "BBQN Visit 2" },
+          },
+          {
+            left:  { src: "assets/IMG_1305.jpeg", label: "Queen`s Taproom" },
+            right: { src: "assets/IMG_2124.jpeg", label: "Doolally Taproom" },
+          },
+          {
+            left:  { src: "assets/IMG_335.png", label: "Ramen Tails"  },
+            right: { src: "assets/IMG_2105.jpeg", label: "K Street" },
+          },
+          {
+            left:  { src: "assets/IMG_8098.jpg", label: "Ambarsariya"  },
+            right: { src: "assets/IMG_2108.jpeg", label: "Haldirams"  },
+          },
+         {
+            left:  { src: "assets/IMG_3794.jpg", label: "Valentine`s 2 "  },
+            right: { src: "assets/IMG_0800.jpg", label: "Valentine`s 3"  },
+          },
+         {
+            left:  { src: "assets/IMG_7349.jpg", label: "Amazonia"  },
+            right: { src: "assets/IMG_4081.png", label: "Social"  },
+          },
+
+          /* ADD MORE ROUNDS BELOW ↓ */
+        ],
+      }
+    },
+
+    /* ══ FOLDER 2: DISASTER OR BANGER ════════════════════════ */
+    {
+      id: "disasterbanger",
+      label: "Disaster or\nBlaster? 💥",
+      icon: "💥",
+      gameType: "disasterbanger",
+      content: {
+        title: "Disaster or Blaster? 💥",
+        subtitle: "Swipe left = Disaster 🌀 &nbsp; Swipe right = Blaster 💚",
+        /*
+         * HOW TO ADD CARDS:
+         * Copy one object and paste into this array.
+         * src: null → emoji shown instead
+         */
+        cards: [
+          { src: "assets/IMG_9075.jpg", label: "🍽️" },
+          { src: "assets/IMG_7544.png", label: "🛶"  },
+          { src: "assets/IMG_5613.png", label: "🛵🌃" },
+          { src: "assets/IMG_245.png", label: "🎳" },
+          { src: "assets/IMG_2107.png", label: "🚖🏢"  },
+          { src: "assets/IMG_2111.jpeg", label: "🕵️‍♂️" },
+          { src: "assets/IMG_3942.png", label: "🎄" },
+          { src: "assets/IMG_6949.jpg", label: "DeAura☠"},
+          { src: "assets/IMG_4256.png", label: "🎉"},
+          /* ADD MORE CARDS BELOW ↓ */
+        ],
+      }
+    },
+
+    /* ══ FOLDER 3: MATCH THE FOLLOWING ═══════════════════════ */
+    {
+      id: "matchfollowing",
+      label: "Match the\nMemory 🔗",
+      icon: "🔗",
+      gameType: "matchfollowing",
+      content: {
+        title: "Match the Memory 🔗",
+        subtitle: "Reorder the right column items to match the left.",
+        /*
+         * HOW TO ADD PAIRS:
+         * Add an object with left and right.
+         * The engine shuffles the right column automatically.
+         * correctIndex is set automatically — just list pairs in order.
+         */
+        pairs: [
+          {
+            left:  { src: "assets/IMG_5100.png", label: ""},
+            right: { src: "assets/IMG_1353.png", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_2441.png", label: ""},
+            right: { src: "assets/IMG_9275.jpg", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_2594.png", label: ""},
+            right: { src: "assets/IMG_8985.jpg", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_3525.png", label: ""},
+            right: { src: "assets/IMG_5189.png", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_4446.png", label: ""},
+            right: { src: "assets/IMG_0646.jpg", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_0530.jpg", label: ""},
+            right: { src: "assets/IMG_9427.jpg", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_1374.jpeg", label: ""},
+            right: { src: "assets/IMG_2722.png", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_4036.png", label: ""},
+            right: { src: "assets/IMG_5716.png", label: ""},
+          },
+          {
+            left:  { src: "assets/IMG_2128.jpg", label: ""},
+            right: { src: "assets/IMG_2129.jpg", label: ""},
+          },
+          /* ADD MORE PAIRS BELOW ↓ */
+          {
+            left:  { src: "assets/IMG_5431.png", label: ""},
+            right: { src: "assets/IMG_4243.jpg", label: ""},
+          },
+	
+        ],
+      }
+    },
+
+    /* ══ FOLDER 4: RATE THE EXPERIENCE ═══════════════════════ */
+    {
+      id: "rateexp",
+      label: "Rate the\nExperience ⭐",
+      icon: "⭐",
+      gameType: "rateexp",
+      content: {
+        title: "Rate the Experience ⭐",
+        subtitle: "Give each memory a star rating. Be honest.",
+        /*
+         * HOW TO ADD ROUNDS / CHANGE PHOTOS PER ROUND:
+         * Each element in `rounds` is one page of cards.
+         * A round can have 2, 3, 4, or 5 items — just add/remove from the array.
+         * Example: rounds[0] has 3 items, rounds[1] has 5 items — totally fine.
+         */
+        rounds: [
+          /* Round 1 — Trips */
+          [
+            { src: "assets/IMG_4698.png", label: "🏔️"},
+            { src: "assets/IMG_6065.png", label: "🌊"},
+            { src: "assets/IMG_0396.jpg", label: "✈️"},
+          ],
+	  [
+            { src: "assets/IMG_0244.jpg", label: "✈️"},
+            { src: "assets/IMG_5958.png", label: "🌊"},
+            { src: "assets/IMG_4773.png", label: "🏔️"},
+          ],
+	  [
+            { src: "assets/IMG_2090.jpeg", label: "🏔️"},
+            { src: "assets/IMG_6106.png", label: "🌊"},
+            { src: "assets/IMG_9939.jpg", label: "✈️"},
+          ],
+          /* Round 2 — More trips */
+          [
+            { src: "assets/IMG_7624.jpg",label: "🌴" },
+            { src: "assets/IMG_7788.jpg",label: "🍽" },
+            { src: "assets/IMG_7564.jpg",label: "🚗" },
+            { src: "assets/IMG_7838.jpg",label: "🌄" },
+		
+          ],
+          [
+            { src: "assets/IMG_4755.jpg",label: "🌴" },
+            { src: "assets/IMG_2091.jpeg",label: "🚗" },
+            { src: "assets/IMG_4824.jpg",label: "🍷" },
+            { src: "assets/IMG_4813.jpg",label: "🍇" },
+		
+          ],
+          /* Round 3 — Forgotton Cafes */
+          [
+            { src: "assets/IMG_2092.png", label: "Alfredo's" },
+            { src: "assets/IMG_2044.png", label: "some pizza place"},
+            { src: "assets/IMG_2713.jpeg", label: "Bademiya"  },
+            { src: "assets/IMG_4349.png", label: "Bora Bora"},
+          ],
+
+          /* Round 4 — Clubs & nights */
+          [
+            { src: "assets/IMG_4998.jpg", label: "Butterfly High" },
+            { src: "assets/IMG_1676.png", label: "MH04 " },
+            { src: "assets/IMG_2098.jpeg", label: "Yeda Republic" },
+          ],
+          /* Round 5 — Experiences */
+          [
+            { src: "assets/IMG_1720.jpeg", label: "⛵" },
+            { src: "assets/IMG_1646.jpeg", label: "🚉" },
+            { src: "assets/IMG_1516.jpeg", label: "🏝" },
+            { src: "assets/IMG_1730.jpeg", label: "🐘" },
+          ],
+          /* ADD MORE ROUNDS BELOW ↓ (copy a round array and paste) */
+        ],
+      }
+    },
+
+    /* ══ FOLDER 5: TRUE OR FALSE ══════════════════════════════ */
+    {
+      id: "truefalse",
+      label: "True or False\n⏱️ Rapid Fire",
+      icon: "❓",
+      gameType: "truefalse",
+      timerSeconds: 7, /* seconds per question — change freely */
+      content: {
+        title: "True or False ⏱️",
+        subtitle: "Rapid fire. 10 seconds per question. Go!",
+        /*
+         * HOW TO ADD QUESTIONS:
+         * Copy one object and paste into this array.
+         * answer: true or false
+         * explanation: shown after she answers
+         */
+        questions: [
+          {
+            src: null, emoji: "✨",
+            q: "A large number of memorable moments began with lets just meet.",
+            answer: true,
+            explanation: "Meets frequently escalated into side quests",
+          },
+          {
+            src: null, emoji: "🍲",
+            q: "A significant percentage of their relationship budget has been invested in food.",
+            answer: true,
+            explanation: "Financial auditors are concerned.",
+          },
+          {
+            src: null, emoji: "💀",
+            q: "After the first De Aura incident, they wisely decided never to return.",
+            answer: false,
+            explanation: "Science cannot explain this and archive recommends stopping there.",
+          },
+          {
+            src: null, emoji: "💂",
+            q: "Security guards have generally supported this relationship.",
+            answer: false,
+            explanation: "Multiple security teams disagree.",
+          },
+          {
+            src: null, emoji: "🤗",
+            q: "Always there is readiness to help and support each other in anything and everything.",
+            answer: true,
+            explanation: "Archive confirms- teamwork so smooth it should be trademarked.",
+          },
+          {
+            src: null, emoji: "🏖️",
+            q: "A failed Versova mission somehow ended on a giant wheel at 1 AM.",
+            answer: true,
+            explanation: "This timeline is somehow real.",
+          },
+          {
+            src: null, emoji: "🏔️",
+            q: "Kasol was planned as a couple's trip from the start.",
+            answer: false,
+            explanation: "Went as besties but then real character kicked in.",
+          },
+          {
+            src: null, emoji: "🆘",
+            q: "Almost got caught, when her mom came home earlier than they expected",
+            answer: true,
+            explanation: "Chaos score: 99.5/100.",
+          },
+          {
+            src: null, emoji: "🍚",
+            q: "Rajma rice was prepared with approximately zero emotional effort.",
+            answer: false,
+            explanation: "Archive detected dangerous levels of affection.",
+          },
+          {
+            src: null, emoji: "🙋",
+            q: "Most of their adventures could be explained to parents without raising further questions.",
+            answer: false,
+            explanation: "Immediate rejection expected.",
+          },
+          /* ADD MORE QUESTIONS BELOW ↓ */
+          {
+            src: null, emoji: "🤖",
+            q: "She got home arrest lite because of wild activities in this relationship.",
+            answer: true,
+            explanation: "Archive stored this at the intersection of worst & best memories.",
+          },
+          {
+            src: null, emoji: "🤖",
+            q: "They have healthy risk assessment skills.",
+            answer: false,
+            explanation: "Archive laughter detected.",
+          },
+          {
+            src: null, emoji: "🍕",
+            q: "Food is generally more important than the actual destination.",
+            answer: true,
+            explanation: "Sometimes the destination IS the food.",
+          },
+
+        ],
+      }
+    },
+
+    /* ══ FOLDER 6: CHAOS METER ════════════════════════════════ */
+    {
+      id: "chaosmeter",
+      label: "Chaos Meter\n🌡️",
+      icon: "🌡️",
+      gameType: "chaosmeter",
+      content: {
+        title: "Chaos Meter 🌡️",
+        subtitle: "Rate how chaotic each decision was. Drag the gauge.",
+        /*
+         * HOW TO ADD INCIDENTS:
+         * Copy one object and paste into this array.
+         */
+        incidents: [
+          { src: "assets/IMG_2143.jpeg", emoji: "✈️", label: "Pondicherry flight fiasco" },
+          { src: "assets/IMG_2142.jpeg", emoji: "🌙", label: "Intrusive thoughts to reality- SoBo sneakout." },
+          { src: "assets/IMG_9816.png", emoji: "💀", label: "Giving De Aura a second chance" },
+          { src: "assets/IMG_7145.jpg", emoji: "🎓", label: "Pretending to be IITians to enter campus" },
+          { src: "assets/IMG_8855.png", emoji: "🚗", label: "Risky Dateout via WagonR" },
+          { src: "assets/IMG_2144.png", emoji: "🪪", label: "Axis office Sneak-in" },
+          { src: "assets/IMG_4420.jpg", emoji: "😴", label: "Midnight chill-wait'n'watch as guard turned into car washer" },
+          { src: "assets/IMG_3179.png", emoji: "🎬", label: "Movie watching without tickets." },
+          /* ADD MORE INCIDENTS BELOW ↓ */
+          { src: "assets/IMG_2675.jpg", emoji: "🍰", label: "Expectation: Starter + main course + dessert   Reality: Starters + dessert" },
+          { src: "assets/IMG_2155.jpeg", emoji: "💃", label: "Tipsy floor hugging dancer" },
+          { src: "assets/IMG_5206.png", emoji: "🍔", label: "Sneaked food into movie hall every time like a ritual." },
+
+        ],
+        chaosLabels: [
+          { max: 25,  label: "Suspiciously responsible 🤨" },
+          { max: 45,  label: "Cautious chaos. Acceptable. 😌" },
+          { max: 65,  label: "Certified disaster duo 💥" },
+          { max: 80,  label: "How are you still functioning? 😳" },
+          { max: 100, label: "The archive is concerned. And impressed. 🫡" },
+        ],
+      }
+    },
+
+    /* ══ FOLDER 7: VIDEO GALLERY ════════════════════════════ */
+    {
+      id: "videogallery",
+      label: "Video Gallery\n🎬 Memories",
+      icon: "🎬",
+      gameType: "videogallery",
+      content: {
+        title: "The Reel 🎬",
+        subtitle: "Tap any video to play it. All memories in one view.",
+        /*
+         * HOW TO ADD VIDEOS:
+         * Add objects to the `videos` array.
+         * Each has a src (path to video file), emoji fallback, and title.
+         * src: "assets/video1.mp4"   – your video file
+         * src: null                  – shows emoji placeholder tile
+         * shape: "sq" | "wide" | "tall" | ""  – optional tile shape
+         */
+        videos: [
+          { src: "assets/Vid(6).mp4", emoji: "🧁", title: "Everyday Munchies" },
+          { src: "assets/Vid(10).mp4", emoji: "💫", title: "Happy Kiddo" },
+          { src: "assets/Vid(3).mp4", emoji: "🛵", title: "Fun Midnight Waiting" },
+          { src: "assets/Vid(8).mp4", emoji: "👩🏻‍🦰", title: "Princess" },
+          { src: "assets/Vid(5).mp4", emoji: "🎡", title: "Ferris Wheel" },
+          { src: "assets/Vid(7).mp4", emoji: "🎁", title: "Surpriser" },
+          { src: "assets/Vid(9).mp4", emoji: "🏏", title: "Decathlon Dominator" },
+          { src: "assets/Vid(1).mp4", emoji: "🥂", title: "Banarsi Patiala" },
+          { src: "assets/Vid(2).mp4", emoji: "🎶", title: "Coldplay Concert" },
+          /* ADD MORE VIDEOS BELOW ↓ */
+        ],
+      }
+    },
+
+    /* ══ FOLDER 8: HIDDEN STATS ═══════════════════════════════ */
+    {
+      id: "hiddenstats",
+      label: "Hidden Stats\n📊 Classified",
+      icon: "📊",
+      gameType: "hiddenstats",
+      content: {
+        title: "Relationship Analytics 📊",
+        subtitle: "Three years. By the numbers. File status: partially corrupted.",
+        /*
+         * HOW TO ADD STATS:
+         * Add objects to the `stats` array.
+         */
+        stats: [
+          { label: "Favourite activity together", value: "existing." },
+          { label: "Relationship survival method", value: "humour and snacks." },
+          { label: "Chance of one random plan becoming core memory", value: "near certainty." },
+          { label: "Primary love language detected", value: "quality time disguised as food." },
+          { label: "Amount of unnecessary travelling completed", value:"impressive." },
+          { label: "Cafes visited -> total count", value: "finance team still calculating." },
+          { label: "Emotional weather forecast", value: "mostly warm with periodic drama." },
+          { label: "Relationship genre", value: "romcom with occasional thriller episodes." },
+          { label: "Comfort level achieved", value: "too quickly" },
+          { label: "Successful execution of original plans", value: "disputed. case ongoing." },
+          { label: "Arguments that became jokes eventually", value: "all of them. it just takes time." },
+          { label: "Average serious discussion duration", value: "considerably low." },
+          /* ADD MORE STATS BELOW ↓ */
+          { label: "Relationship operating principle", value: "together we`ll figure out." },
+          { label: "Favourite relationship feature", value: "no pressure to perform" },
+          { label: "Overall assessment & Archive recommendation", value: "Beautiful! & continue current strategy." },
+        
+],
+      }
+    },
+
+  ], /* end folders */
+
+  /* ══ REWARD VAULT ════════════════════════════════════════════ */
+  vault: {
+    title: "The Reward Vault 🎁",
+    subtitle: "You made it through the entire archive. Now pick what comes next.",
+    /*
+     * HOW TO ADD/EDIT GIFT OPTIONS:
+     * Each gift has a label, emoji, and an array of designs.
+     * Add product images to designs as src: "assets/ring1.jpg"
+     */
+    gifts: [
+      {
+        id: "anklet",
+        emoji: "✨",
+        label: "Anklet",
+        designs: [
+          { src: null, emoji: "🌸", label: "Design A — Floral" },
+          { src: null, emoji: "⛓️", label: "Design B — Chain" },
+          { src: null, emoji: "💎", label: "Design C — Minimalist" },
+        ],
+      },
+      {
+        id: "ring",
+        emoji: "💍",
+        label: "Ring",
+        designs: [
+          { src: null, emoji: "🌸", label: "Design A" },
+          { src: null, emoji: "💫", label: "Design B" },
+          { src: null, emoji: "🌙", label: "Design C" },
+        ],
+      },
+      {
+        id: "earrings",
+        emoji: "👂",
+        label: "Earrings",
+        designs: [
+          { src: null, emoji: "🌸", label: "Design A" },
+          { src: null, emoji: "⭕", label: "Design B — Hoops" },
+          { src: null, emoji: "💧", label: "Design C — Drops" },
+        ],
+      },
+      {
+        id: "earphones",
+        emoji: "🎧",
+        label: "Earphones",
+        designs: [
+          { src: null, emoji: "⬛", label: "Design A — Black" },
+          { src: null, emoji: "🤍", label: "Design B — White" },
+          { src: null, emoji: "🌸", label: "Design C — Pink" },
+        ],
+      },
+    ],
+  },
+
+}; /* end PHASE2_CONFIG */
+
+/* ═══════════════════════════════════════════════════════════════
+   ENGINE — Do not edit below unless you know what you're doing.
+═══════════════════════════════════════════════════════════════ */
+
+let completedFolders = new Set();
+let currentFolder = null;
+let gameState = {};
+
+/* ── Render hub folders ──────────────────────────────────────── */
+function renderHub() {
+  const cluster = document.getElementById("folder-cluster");
+  cluster.innerHTML = "";
+  PHASE2_CONFIG.folders.forEach(folder => {
+    const done = completedFolders.has(folder.id);
+    const div = document.createElement("div");
+    div.className = "folder-item" + (done ? " completed" : "");
+    div.innerHTML = `
+      <div class="folder-body">
+        <span>${folder.icon}</span>
+        <div class="f-lock">${done ? "✅" : "🔓"}</div>
+      </div>
+      <div class="folder-label">${folder.label.replace(/\n/g,"<br>")}</div>`;
+    div.onclick = () => openFolder(folder.id);
+    cluster.appendChild(div);
+  });
+  // Update vault
+  const allDone = PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
+  const vf = document.getElementById("vault-folder");
+  const vl = document.getElementById("vault-label");
+  if (allDone) {
+    vf.classList.remove("vault-locked");
+    vl.textContent = "🔓 Unlocked!";
+  } else {
+    vf.classList.add("vault-locked");
+    const remaining = PHASE2_CONFIG.folders.length - completedFolders.size;
+    vl.textContent = `🔒 ${remaining} folder${remaining!==1?"s":""} remaining`;
+  }
+}
+
+function tryOpenVault() {
+  const allDone = PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
+  if (!allDone) {
+    alert("Complete all folders first to unlock the Reward Vault! 🔒");
+    return;
+  }
+  openVault();
+}
+
+/* ── Open a folder / game ────────────────────────────────────── */
+function openFolder(folderId) {
+  currentFolder = PHASE2_CONFIG.folders.find(f => f.id === folderId);
+  if (!currentFolder) return;
+  gameState = { step: 0, score: 0, choices: [] };
+  document.getElementById("modal-title").textContent = currentFolder.content.title;
+  document.getElementById("modal-score").textContent = "";
+  document.getElementById("btn-prev").style.display = "none";
+  renderGame();
+  document.getElementById("modal-overlay").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  currentFolder = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
+}
+
+/* ── Next / Prev buttons ─────────────────────────────────────── */
+function gameNext() {
+  if (!currentFolder) return;
+  const type = currentFolder.gameType;
+  const handlers = { thisorthat, disasterbanger, matchfollowing, rateexp, truefalse, chaosmeter, videogallery, photoreveal, hiddenstats, vault };
+  if (handlers[type] && handlers[type].next) handlers[type].next();
+  else defaultNext();
+}
+function gamePrev() {
+  if (!currentFolder) return;
+  const type = currentFolder.gameType;
+  if (gameState.step > 0) { gameState.step--; renderGame(); }
+}
+function defaultNext() {
+  const co = currentFolder.content;
+  const rounds = co.rounds || co.questions || co.incidents || co.photos || co.pairs || co.cards || co.stats || [];
+  const total = rounds.length;
+  if (gameState.step < total - 1) { gameState.step++; renderGame(); }
+  else markComplete();
+}
+
+function renderGame() {
+  const body = document.getElementById("modal-body");
+  body.innerHTML = "";
+  const type = currentFolder.gameType;
+  const renderers = { thisorthat, disasterbanger, matchfollowing, rateexp, truefalse, chaosmeter, videogallery, photoreveal, hiddenstats, vault };
+  if (renderers[type] && renderers[type].render) renderers[type].render(body);
+  else body.innerHTML = `<div class="placeholder-game"><div class="pg-icon">🚧</div><h3>Coming Soon</h3><p>This game is not yet implemented.</p></div>`;
+}
+
+function markComplete() {
+  completedFolders.add(currentFolder.id);
+  renderHub();
+  const body = document.getElementById("modal-body");
+  body.innerHTML = `
+    <div class="completion-banner show">
+      <div class="big-emoji">🎉</div>
+      <h3>Activity Complete!</h3>
+      <p>Close this folder and open the next one.</p>
+      <button class="btn btn-primary" onclick="closeModal()">Back to Archive →</button>
+    </div>`;
+  document.getElementById("btn-next").style.display = "none";
+  setTimeout(() => { document.getElementById("btn-next").style.display = ""; }, 10000);
+}
+
+/* ── Add thumbnail to strip (alternates left/right) ──────────── */
+let thumbSide = 0;
+function addThumb(src, emoji, cls="") {
+  const stripId = (thumbSide % 2 === 0) ? "thumb-strip-right" : "thumb-strip-left";
+  thumbSide++;
+  const strip = document.getElementById(stripId);
+  const div = document.createElement("div");
+  div.className = "thumb " + cls;
+  if (src) {
+    const img = document.createElement("img"); img.src = src; div.appendChild(img);
+    div.onclick = () => openPhotoViewer(src);
+  } else {
+    div.textContent = emoji;
+  }
+  strip.insertBefore(div, strip.firstChild);
+}
+
+/* ── Photo viewer ─────────────────────────────────────────────── */
+function openPhotoViewer(src) {
+  document.getElementById("photo-viewer-img").src = src;
+  document.getElementById("photo-viewer-overlay").classList.add("open");
+}
+function closePhotoViewer() {
+  document.getElementById("photo-viewer-overlay").classList.remove("open");
+  document.getElementById("photo-viewer-img").src = "";
+}
+
+/* ── Video player ─────────────────────────────────────────────── */
+function openVideoPlayer(src) {
+  const vid = document.getElementById("video-player-el");
+  vid.src = src;
+  document.getElementById("video-player-overlay").classList.add("open");
+}
+function closeVideoPlayer() {
+  const vid = document.getElementById("video-player-el");
+  vid.pause(); vid.src = "";
+  document.getElementById("video-player-overlay").classList.remove("open");
+}
+
+/* ── Image or emoji helper ───────────────────────────────────── */
+function imgOrEmoji(item, cls="") {
+  if (item.src) return `<img src="${item.src}" alt="${item.label||""}" class="${cls}">`;
+  return `<span class="ph">${item.emoji||"📷"}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GAME IMPLEMENTATIONS
+═══════════════════════════════════════════════════════════════ */
+
+/* ── 1. THIS OR THAT ─────────────────────────────────────────── */
+const thisorthat = {
+  render(body) {
+    const rounds = currentFolder.content.rounds;
+    const step = gameState.step;
+    const round = rounds[step];
+    const total = rounds.length;
+    body.innerHTML = `
+      <p class="round-tag">Round ${step+1} of ${total}</p>
+      <p style="text-align:center;color:var(--muted);margin-bottom:20px">${currentFolder.content.subtitle}</p>
+      <div class="tot-arena">
+        <div class="tot-card" id="tot-left" data-side="left">
+          <div class="card-label">${round.left.label}</div>
+          <div class="tot-img-wrap">${imgOrEmoji(round.left)}</div>
+        </div>
+        <div class="tot-divider">⚡</div>
+        <div class="tot-card" id="tot-right" data-side="right">
+          <div class="card-label">${round.right.label}</div>
+          <div class="tot-img-wrap">${imgOrEmoji(round.right)}</div>
+        </div>
+      </div>`;
+    gameState.totChosen = false;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next →" : "Finish ✓";
+    document.getElementById("btn-next").disabled = true;
+    ["tot-left","tot-right"].forEach(id => {
+      document.getElementById(id).addEventListener("click", function() {
+        if (gameState.totChosen) return;
+        gameState.totChosen = true;
+        const side = this.dataset.side;
+        const chosen = side === "left" ? round.left : round.right;
+        const other  = side === "left" ? "tot-right" : "tot-left";
+        this.classList.add("chosen");
+        document.getElementById(other).classList.add("unchosen");
+        // heart animation
+        const heart = document.createElement("div");
+        heart.className = "tot-heart"; heart.textContent = "❤️";
+        this.appendChild(heart);
+        setTimeout(() => heart.remove(), 600);
+        // thumbnail
+        addThumb(chosen.src, chosen.emoji);
+        document.getElementById("btn-next").disabled = false;
+        gameState.choices.push({ round: step, chosen: chosen.label });
+        document.getElementById("modal-score").textContent = `${step+1} / ${total} done`;
+      });
+    });
+  },
+  next() {
+    if (!gameState.totChosen) return;
+    const rounds = currentFolder.content.rounds;
+    if (gameState.step < rounds.length - 1) { gameState.step++; thisorthat.render(document.getElementById("modal-body")); }
+    else markComplete();
+  }
+};
+
+/* ── 2. DISASTER OR BANGER ───────────────────────────────────── */
+const disasterbanger = {
+  render(body) {
+    const cards = currentFolder.content.cards;
+    const step = gameState.step;
+    const card = cards[step];
+    const total = cards.length;
+    body.innerHTML = `
+      <p class="round-tag">Card ${step+1} of ${total}</p>
+      <p style="text-align:center;color:var(--muted);margin-bottom:28px">${currentFolder.content.subtitle}</p>
+      <div class="dob-arena">
+        <div class="dob-side-wrap">
+          <button class="dob-side-btn dob-disaster-btn" onclick="disasterbanger.choose('disaster')" title="Disaster">🌀</button>
+          <span class="dob-side-hint">Tap for<br>Disaster</span>
+        </div>
+        <div class="dob-bg-hint left" id="dob-bg-left">🌀</div>
+        <div class="dob-card" id="dob-card">
+          <div class="swipe-label disaster" id="sw-disaster">🌀 DISASTER</div>
+          <div class="swipe-label banger"   id="sw-banger">💚 BLASTER</div>
+          ${imgOrEmoji(card)}
+          <div class="card-label">${card.label}</div>
+        </div>
+        <div class="dob-bg-hint right" id="dob-bg-right">💚</div>
+        <div class="dob-side-wrap">
+          <button class="dob-side-btn dob-banger-btn" onclick="disasterbanger.choose('banger')" title="Blaster">💚</button>
+          <span class="dob-side-hint">Tap for<br>Blaster</span>
+        </div>
+      </div>
+      <div class="dob-hint" style="position:relative;bottom:auto;margin-top:16px">
+        <span>← 🌀 Disaster</span>
+        <span>Blaster 💚 →</span>
+      </div>`;
+    document.getElementById("btn-next").disabled = true;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next →" : "Finish ✓";
+    disasterbanger.initDrag(card);
+  },
+  initDrag(card) {
+    const el = document.getElementById("dob-card");
+    if (!el) return;
+    let startX = 0, curX = 0, dragging = false;
+    const onMove = (x) => {
+      curX = x - startX;
+      el.style.transform = `translateX(${curX}px) rotate(${curX*0.04}deg)`;
+      const ratio = Math.min(Math.abs(curX)/120, 1);
+      document.getElementById("sw-disaster").classList.toggle("show", curX < -40);
+      document.getElementById("sw-banger").classList.toggle("show", curX > 40);
+      document.getElementById("dob-bg-left").classList.toggle("show", curX < -40);
+      document.getElementById("dob-bg-right").classList.toggle("show", curX > 40);
+    };
+    el.addEventListener("mousedown", e => { dragging=true; startX=e.clientX; el.classList.add("dragging"); });
+    window.addEventListener("mousemove", e => { if(dragging) onMove(e.clientX); });
+    window.addEventListener("mouseup", () => {
+      if(!dragging) return; dragging=false; el.classList.remove("dragging");
+      if(curX < -40) disasterbanger.choose("disaster");
+      else if(curX > 40) disasterbanger.choose("banger");
+      else { el.style.transform=""; curX=0; document.getElementById("sw-disaster")?.classList.remove("show"); document.getElementById("sw-banger")?.classList.remove("show"); document.getElementById("dob-bg-left")?.classList.remove("show"); document.getElementById("dob-bg-right")?.classList.remove("show"); }
+    });
+    // touch
+    el.addEventListener("touchstart", e => { dragging=true; startX=e.touches[0].clientX; }, {passive:true});
+    el.addEventListener("touchmove",  e => { if(dragging) onMove(e.touches[0].clientX); }, {passive:true});
+    el.addEventListener("touchend",   () => { if(!dragging) return; dragging=false; if(curX<-40) disasterbanger.choose("disaster"); else if(curX>40) disasterbanger.choose("banger"); else { el.style.transform=""; curX=0; } });
+  },
+  choose(verdict) {
+    const cards = currentFolder.content.cards;
+    const card = cards[gameState.step];
+    const el = document.getElementById("dob-card");
+    if (!el || el.dataset.decided) return;
+    el.dataset.decided = "1";
+    const isDisaster = verdict === "disaster";
+    el.style.transition = "transform .4s ease, opacity .4s";
+    el.style.transform = `translateX(${isDisaster ? -350 : 350}px) rotate(${isDisaster ? -25 : 25}deg)`;
+    el.style.opacity = "0";
+    addThumb(card.src, card.emoji, isDisaster ? "disaster" : "banger");
+    gameState.choices.push({ card: card.label, verdict });
+    document.getElementById("btn-next").disabled = false;
+    document.getElementById("modal-score").textContent = `${gameState.step+1} / ${cards.length} done`;
+    setTimeout(() => {
+      const total = cards.length;
+      if (gameState.step < total-1) { gameState.step++; disasterbanger.render(document.getElementById("modal-body")); }
+      else markComplete();
+    }, 450);
+  },
+  next() { /* auto-advances on swipe */ }
+};
+
+/* ── 3. MATCH THE FOLLOWING ──────────────────────────────────── */
+const matchfollowing = {
+  render(body) {
+    const pairs = currentFolder.content.pairs;
+    // Build shuffled right column
+    if (!gameState.matchOrder) {
+      gameState.matchOrder = pairs.map((_,i) => i);
+      for(let i=gameState.matchOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[gameState.matchOrder[i],gameState.matchOrder[j]]=[gameState.matchOrder[j],gameState.matchOrder[i]];}
+    }
+    const order = gameState.matchOrder;
+    body.innerHTML = `
+      <p style="color:var(--muted);font-size:12px;margin-bottom:14px;text-align:center">
+        🔀 Identify how the photos on the right are related to ones on the left side and then drag to match photos.
+      </p>
+      <div class="match-grid" id="match-grid">
+        ${pairs.map((p, i) => `
+          <div class="match-pair-row" data-row="${i}">
+            <div class="match-left-item" data-idx="${i}" title="${p.left.label}">
+              ${p.left.src ? `<img src="${p.left.src}" alt="${p.left.label}">` : `<span class="ph">${p.left.emoji||"📷"}</span>`}
+            </div>
+            <span class="match-pair-divider">🔗</span>
+            <div class="match-right-item" data-idx="${order[i]}" title="${pairs[order[i]].right.label}">
+              ${pairs[order[i]].right.src ? `<img src="${pairs[order[i]].right.src}" alt="${pairs[order[i]].right.label}">` : `<span class="ph">${pairs[order[i]].right.emoji||"📷"}</span>`}
+            </div>
+          </div>`).join("")}
+      </div>
+      <div class="match-check" id="match-check">✅</div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-primary" onclick="matchfollowing.check()">Check Answers ✓</button>
+      </div>`;
+    document.getElementById("btn-next").disabled = true;
+    matchfollowing.initDrag();
+  },
+  initDrag() {
+    const grid = document.getElementById("match-grid");
+    if(!grid) return;
+
+    let srcItem = null, ghost = null, offsetY = 0;
+
+    function swapItems(a, b){
+      const tmpIdx = a.dataset.idx, tmpHtml = a.innerHTML, tmpTitle = a.title;
+      a.dataset.idx = b.dataset.idx; a.innerHTML = b.innerHTML; a.title = b.title;
+      b.dataset.idx = tmpIdx;        b.innerHTML = tmpHtml;     b.title = tmpTitle;
+    }
+
+    function startDrag(el, clientY){
+      srcItem = el;
+      const rect = el.getBoundingClientRect();
+      offsetY = clientY - rect.top;
+      ghost = el.cloneNode(true);
+      ghost.style.cssText = `position:fixed;left:${rect.left}px;top:${rect.top}px;` +
+        `width:${rect.width}px;pointer-events:none;z-index:9999;opacity:.9;` +
+        `border-radius:14px;transform:scale(1.06);box-shadow:0 14px 40px rgba(90,30,60,.4);`;
+      document.body.appendChild(ghost);
+      el.style.opacity = "0.2";
+    }
+
+    function moveDrag(clientY){
+      if(!ghost) return;
+      ghost.style.top = (clientY - offsetY) + "px";
+      grid.querySelectorAll(".match-pair-row").forEach(row => {
+        row.style.background = ""; row.style.borderRadius = "";
+      });
+      const rows = [...grid.querySelectorAll(".match-pair-row")];
+      for(const row of rows){
+        const r = row.getBoundingClientRect();
+        if(clientY >= r.top && clientY <= r.bottom){
+          const ri = row.querySelector(".match-right-item");
+          if(ri && ri !== srcItem){
+            row.style.background = "rgba(244,93,150,.1)";
+            row.style.borderRadius = "14px";
+          }
+          break;
+        }
+      }
+    }
+
+    function endDrag(clientY){
+      if(!srcItem){ if(ghost){ ghost.remove(); ghost = null; } return; }
+      const rows = [...grid.querySelectorAll(".match-pair-row")];
+      for(const row of rows){
+        const r = row.getBoundingClientRect();
+        if(clientY >= r.top && clientY <= r.bottom){
+          const targetItem = row.querySelector(".match-right-item");
+          if(targetItem && targetItem !== srcItem) swapItems(srcItem, targetItem);
+          break;
+        }
+      }
+      srcItem.style.opacity = "";
+      grid.querySelectorAll(".match-pair-row").forEach(row => {
+        row.style.background = ""; row.style.borderRadius = "";
+      });
+      ghost && ghost.remove(); ghost = null; srcItem = null;
+      gameState.matchOrder = rows.map(row => {
+        const ri = row.querySelector(".match-right-item");
+        return ri ? parseInt(ri.dataset.idx) : -1;
+      });
+    }
+
+    [...grid.querySelectorAll(".match-right-item")].forEach(item => {
+      item.addEventListener("mousedown",  e => { e.preventDefault(); startDrag(item, e.clientY); });
+      item.addEventListener("touchstart", e => { e.preventDefault(); startDrag(item, e.touches[0].clientY); }, {passive:false});
+    });
+    window.addEventListener("mousemove",  e => { if(srcItem) moveDrag(e.clientY); });
+    window.addEventListener("touchmove",  e => { if(srcItem){ e.preventDefault(); moveDrag(e.touches[0].clientY); }}, {passive:false});
+    window.addEventListener("mouseup",    e => endDrag(e.clientY));
+    window.addEventListener("touchend",   e => endDrag(e.changedTouches[0].clientY));
+  },
+    check() {
+    const grid = document.getElementById("match-grid");
+    if(!grid) return;
+    const rows = [...grid.querySelectorAll(".match-pair-row")];
+    const items = rows.map(row => row.querySelector(".match-right-item")).filter(Boolean);
+    const correct = items.every((el,i) => parseInt(el.dataset.idx) === i);
+    if(correct){
+      document.getElementById("match-check").classList.add("show");
+      items.forEach(el => el.classList.add("match-correct"));
+      document.getElementById("btn-next").disabled = false;
+      document.getElementById("btn-next").textContent = "Complete ✓";
+    } else {
+      // flash wrong items
+      items.forEach((el,i) => {
+        if(parseInt(el.dataset.idx) !== i){ el.style.outline="3px solid #ff6b6b"; setTimeout(()=>el.style.outline="",900); }
+      });
+      document.getElementById("modal-score").textContent = "Not quite — try again!";
+    }
+  },
+  next() {
+    const correct = document.getElementById("match-check")?.classList.contains("show");
+    if(correct) markComplete();
+  }
+};
+
+/* ── 4. RATE THE EXPERIENCE ──────────────────────────────────── */
+const rateexp = {
+  render(body) {
+    const rounds = currentFolder.content.rounds;
+    const step = gameState.step;
+    const round = rounds[step];
+    const total = rounds.length;
+    if(!gameState.ratings) gameState.ratings = [];
+    body.innerHTML = `
+      <p class="round-progress">Round ${step+1} of ${total}</p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:20px">${currentFolder.content.subtitle}</p>
+      <div class="rate-grid" id="rate-grid">
+        ${round.map((item,i) => `
+          <div class="rate-card" data-card="${i}">
+            <div class="rate-card-img">
+              ${item.src ? `<img src="${item.src}" alt="${item.label}">` : item.emoji}
+            </div>
+            <div class="rate-card-body">
+              <div class="rate-label">${item.label}</div>
+              <div class="star-row" id="stars-${step}-${i}">
+                ${[1,2,3,4,5].map(n=>`<span class="star" data-val="${n}" data-card="${i}" data-step="${step}">★</span>`).join("")}
+              </div>
+            </div>
+          </div>`).join("")}
+      </div>`;
+    document.getElementById("btn-next").disabled = true;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next Round →" : "Finish ✓";
+    if(!gameState.roundRatings) gameState.roundRatings = {};
+    gameState.roundRatings[step] = gameState.roundRatings[step] || {};
+    document.querySelectorAll(".star-row").forEach(row => {
+      const stars = [...row.querySelectorAll(".star")];
+      const card = parseInt(stars[0].dataset.card);
+      const st   = parseInt(stars[0].dataset.step);
+
+      // Hover: highlight all stars up to hovered index
+      stars.forEach((star, idx) => {
+        star.addEventListener("mouseenter", () => {
+          stars.forEach((s, i) => {
+            s.classList.toggle("hovered", i <= idx);
+            s.classList.remove("active");
+          });
+        });
+      });
+
+      // Mouse leaves the row: restore saved rating
+      row.addEventListener("mouseleave", () => {
+        const saved = (gameState.roundRatings[st] && gameState.roundRatings[st][card]) || 0;
+        stars.forEach((s, i) => {
+          s.classList.remove("hovered");
+          s.classList.toggle("active", i < saved);
+        });
+      });
+
+      // Click: lock in the rating
+      stars.forEach((star, idx) => {
+        star.addEventListener("click", function() {
+          const val = idx + 1;
+          gameState.roundRatings[st][card] = val;
+          stars.forEach((s, i) => {
+            s.classList.remove("hovered");
+            s.classList.toggle("active", i < val);
+          });
+          // Check if all rated
+          const allRated = round.every((_,i) => gameState.roundRatings[step][i]);
+          document.getElementById("btn-next").disabled = !allRated;
+          if(allRated) {
+            round.forEach((item,i) => addThumb(item.src, item.emoji));
+            document.getElementById("modal-score").textContent = `Round ${step+1} rated ✓`;
+          }
+        });
+      });
+    });
+
+  },
+  next() {
+    const rounds = currentFolder.content.rounds;
+    if (gameState.step < rounds.length-1) { gameState.step++; rateexp.render(document.getElementById("modal-body")); }
+    else markComplete();
+  }
+};
+
+/* ── 5. TRUE OR FALSE ────────────────────────────────────────── */
+const truefalse = {
+  timer: null,
+  render(body) {
+    const qs = currentFolder.content.questions;
+    const step = gameState.step;
+    const q = qs[step];
+    const total = qs.length;
+    const secs = currentFolder.timerSeconds || 12;
+    if(!gameState.tofScore) gameState.tofScore = 0;
+    body.innerHTML = `
+      <p class="round-tag">Question ${step+1} of ${total} · Score: ${gameState.tofScore}</p>
+      <div class="timer-label" id="tof-timer">${secs}</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="tof-bar" style="width:100%"></div></div>
+      <div class="tof-card">
+        <div class="tof-img">${q.src ? `<img src="${q.src}" alt="">` : q.emoji}</div>
+        <div class="tof-body">
+          <div class="tof-q">${q.q}</div>
+          <div class="tof-btns">
+            <button class="tof-btn tof-btn-t" id="tof-t" onclick="truefalse.answer(true)">✅ TRUE</button>
+            <button class="tof-btn tof-btn-f" id="tof-f" onclick="truefalse.answer(false)">❌ FALSE</button>
+          </div>
+          <div class="tof-result" id="tof-result"></div>
+        </div>
+      </div>`;
+    document.getElementById("btn-next").disabled = true;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next →" : "See Score";
+    clearInterval(truefalse.timer);
+    let left = secs;
+    truefalse.timer = setInterval(() => {
+      left--;
+      const pct = (left/secs)*100;
+      const timerEl = document.getElementById("tof-timer");
+      const barEl = document.getElementById("tof-bar");
+      if(timerEl) timerEl.textContent = left;
+      if(barEl) barEl.style.width = pct+"%";
+      if(left <= 0) { clearInterval(truefalse.timer); truefalse.answer(null, true); }
+    }, 1000);
+  },
+  answer(val, timedOut=false) {
+    clearInterval(truefalse.timer);
+    const qs = currentFolder.content.questions;
+    const q = qs[gameState.step];
+    const correct = val === q.answer;
+    const tBtn = document.getElementById("tof-t");
+    const fBtn = document.getElementById("tof-f");
+    const res  = document.getElementById("tof-result");
+    if(tBtn) tBtn.disabled = true;
+    if(fBtn) fBtn.disabled = true;
+    if(timedOut) {
+      if(res) res.innerHTML = `<span class="result-verdict">⏱️ Time's up! Answer: ${q.answer ? "TRUE" : "FALSE"}</span><span class="result-explain">${q.explanation}</span>`;
+    } else {
+      if(correct){ gameState.tofScore++; if(res) res.innerHTML = `<span class="result-verdict">✅ Correct!</span><span class="result-explain">${q.explanation}</span>`; }
+      else { if(res) res.innerHTML = `<span class="result-verdict">❌ Nope!</span><span class="result-explain">${q.explanation}</span>`; }
+      const el = val ? tBtn : fBtn;
+      if(el) el.classList.add(correct ? "correct" : "wrong");
+      const correctEl = q.answer ? tBtn : fBtn;
+      if(correctEl) correctEl.classList.add("correct");
+    }
+    if(res) { res.classList.add("show"); res.classList.add(correct ? "correct-result" : "wrong-result"); }
+    document.getElementById("modal-score").textContent = `Score: ${gameState.tofScore}/${qs.length}`;
+    document.getElementById("btn-next").disabled = false;
+  },
+  next() {
+    clearInterval(truefalse.timer);
+    const qs = currentFolder.content.questions;
+    if(gameState.step < qs.length-1){ gameState.step++; truefalse.render(document.getElementById("modal-body")); }
+    else {
+      const body = document.getElementById("modal-body");
+      const pct = Math.round((gameState.tofScore/qs.length)*100);
+      body.innerHTML = `
+        <div class="completion-banner show">
+          <div class="big-emoji">${pct>=80?"🎉":pct>=50?"😄":"😅"}</div>
+          <h3>${gameState.tofScore} / ${qs.length} correct — ${pct}%</h3>
+          <p>${pct>=80?"The archive is impressed. These memories are safe with you.":pct>=50?"Good memory. Some gaps — but that's what the archive is for.":"The memories were there. Buried deep. But there."}</p>
+        </div>`;
+      completedFolders.add(currentFolder.id);
+      renderHub();
+      document.getElementById("btn-next").style.display = "none";
+      setTimeout(() => document.getElementById("btn-next").style.display = "", 5000);
+    }
+  }
+};
+
+/* ── 6. CHAOS METER ──────────────────────────────────────────── */
+const chaosmeter = {
+  render(body) {
+    const incidents = currentFolder.content.incidents;
+    const step = gameState.step;
+    const inc = incidents[step];
+    const total = incidents.length;
+    if(!gameState.chaosScores) gameState.chaosScores = [];
+    const curVal = gameState.chaosScores[step] ?? 50;
+    body.innerHTML = `
+      <p class="round-tag">Incident ${step+1} of ${total}</p>
+      <div class="chaos-scene">
+        <div class="chaos-img">${inc.src ? `<img src="${inc.src}" alt="">` : inc.emoji}</div>
+        <div class="chaos-context">${inc.label}</div>
+        <div class="gauge-wrap">
+          <div class="gauge-labels"><span>😇 Responsible</span><span>😬 Mid</span><span>🔥 Pure Chaos</span></div>
+          <div class="gauge-track" id="gauge-track">
+            <div class="gauge-fill" id="gauge-fill" style="width:${100-curVal}%"></div>
+            <div class="gauge-thumb" id="gauge-thumb" style="left:${curVal}%">🌡️</div>
+          </div>
+          <div class="gauge-value-label" id="gauge-label">Chaos level: ${curVal}%</div>
+        </div>
+      </div>`;
+    document.getElementById("btn-next").disabled = false;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next →" : "See Total Score";
+    chaosmeter.initGauge(curVal, step);
+  },
+  initGauge(initial, step) {
+    const track = document.getElementById("gauge-track");
+    if(!track) return;
+    let val = initial;
+    const update = (x) => {
+      const rect = track.getBoundingClientRect();
+      val = Math.max(0, Math.min(100, Math.round(((x - rect.left) / rect.width)*100)));
+      document.getElementById("gauge-fill").style.width = (100-val)+"%";
+      document.getElementById("gauge-thumb").style.left = val+"%";
+      document.getElementById("gauge-label").textContent = `Chaos level: ${val}%`;
+      gameState.chaosScores[step] = val;
+    };
+    let dragging = false;
+    track.addEventListener("mousedown",  e => { dragging=true; update(e.clientX); });
+    track.addEventListener("touchstart", e => { dragging=true; update(e.touches[0].clientX); }, {passive:true});
+    window.addEventListener("mousemove",  e => { if(dragging) update(e.clientX); });
+    window.addEventListener("touchmove",  e => { if(dragging) update(e.touches[0].clientX); }, {passive:true});
+    window.addEventListener("mouseup",   () => dragging=false);
+    window.addEventListener("touchend",  () => dragging=false);
+    track.addEventListener("click", e => update(e.clientX));
+  },
+  next() {
+    const incidents = currentFolder.content.incidents;
+    if(gameState.step < incidents.length-1){ gameState.step++; chaosmeter.render(document.getElementById("modal-body")); }
+    else {
+      const scores = gameState.chaosScores || [];
+      const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 50;
+      const labels = currentFolder.content.chaosLabels;
+      const label = labels.find(l => avg <= l.max)?.label || labels[labels.length-1].label;
+      const body = document.getElementById("modal-body");
+      body.innerHTML = `
+        <div class="completion-banner show">
+          <div class="big-emoji">🌡️</div>
+          <h3>Average Chaos Score: ${avg}%</h3>
+          <p>${label}</p>
+        </div>`;
+      completedFolders.add(currentFolder.id);
+      renderHub();
+      document.getElementById("btn-next").style.display="none";
+      setTimeout(()=>document.getElementById("btn-next").style.display="",5000);
+    }
+  }
+};
+
+/* ── 7. VIDEO GALLERY ────────────────────────────────────────── */
+const videogallery = {
+  render(body) {
+    const videos = currentFolder.content.videos;
+    // Assign random shapes to tiles for gallery variety
+    const shapes = ["sq", "wide", "tall", "sq", "sq", "sq", "sq", "sq", "sq"];
+    // Shuffle shapes assignment to keep it varied each time
+    const getShape = (i) => {
+      const pattern = ["sq","wide","sq","tall","sq","sq","wide","sq","tall"];
+      return pattern[i % pattern.length] || "sq";
+    };
+    body.innerHTML = `
+      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">${currentFolder.content.subtitle}</p>
+      <div class="vgallery-grid" id="vgallery-grid">
+        ${videos.map((v, i) => {
+          const shape = v.shape || getShape(i);
+          const shapeClass = shape === "sq" ? "shape-sq" : shape === "wide" ? "shape-wide" : shape === "tall" ? "shape-tall" : "shape-sq";
+          return `
+          <div class="vgallery-tile ${shapeClass}" data-idx="${i}" onclick="videogallery.openTile(${i})">
+            ${v.src
+              ? `<video src="${v.src}" muted playsinline preload="metadata"></video>`
+              : `<span class="ph">${v.emoji || "🎬"}</span>`
+            }
+            <div class="play-badge">▶</div>
+          </div>`;
+        }).join("")}
+      </div>`;
+    document.getElementById("btn-next").disabled = false;
+    document.getElementById("btn-next").textContent = "Complete ✓";
+    document.getElementById("modal-score").textContent = `${videos.length} videos`;
+  },
+  openTile(idx) {
+    const videos = currentFolder.content.videos;
+    const v = videos[idx];
+    if (!v || !v.src) return; // no src = placeholder, do nothing
+    // Mark watched
+    const tile = document.querySelector(`.vgallery-tile[data-idx="${idx}"]`);
+    if (tile) tile.classList.add("watched");
+    openVideoPlayer(v.src);
+  },
+  next() { markComplete(); }
+};
+
+
+/* ── 7. PHOTO REVEAL ─────────────────────────────────────────── */
+const photoreveal = {
+  render(body) {
+    const photos = currentFolder.content.photos;
+    const step = gameState.step;
+    const photo = photos[step];
+    const total = photos.length;
+    body.innerHTML = `
+      <p class="round-tag">${step+1} / ${total}</p>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px">
+        <div style="width:min(100%,420px);aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;background:linear-gradient(135deg,var(--blush),var(--lav));display:flex;align-items:center;justify-content:center;font-size:72px;box-shadow:0 16px 40px var(--shadow)">
+          ${photo.src ? `<img src="${photo.src}" alt="" style="width:100%;height:100%;object-fit:cover">` : photo.emoji}
+        </div>
+        <p style="font-family:var(--font-head);font-size:20px;text-align:center;max-width:480px;line-height:1.5;padding:0 8px">${photo.caption}</p>
+      </div>`;
+    document.getElementById("btn-next").disabled = false;
+    document.getElementById("btn-next").textContent = step < total-1 ? "Next →" : "Complete ✓";
+    document.getElementById("modal-score").textContent = `${step+1} of ${total}`;
+  },
+  next() {
+    const photos = currentFolder.content.photos;
+    if(gameState.step < photos.length-1){ gameState.step++; photoreveal.render(document.getElementById("modal-body")); }
+    else markComplete();
+  }
+};
+
+/* ── 8. HIDDEN STATS ─────────────────────────────────────────── */
+const hiddenstats = {
+  render(body) {
+    const stats = currentFolder.content.stats;
+    body.innerHTML = `
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px">${currentFolder.content.subtitle}</p>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${stats.map((s,i) => `
+          <div class="fade-in" style="padding:14px 18px;border-radius:14px;background:var(--card-2);box-shadow:0 4px 16px var(--shadow);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:16px;animation-delay:${i*60}ms">
+            <span style="font-weight:700;font-size:14px;color:var(--text)">${s.label}</span>
+            <span style="font-size:13px;color:var(--blossom);font-weight:700;text-align:right;max-width:50%">${s.value}</span>
+          </div>`).join("")}
+      </div>`;
+    document.getElementById("btn-next").disabled = false;
+    document.getElementById("btn-next").textContent = "Complete ✓";
+  },
+  next() { markComplete(); }
+};
+
+/* ── REWARD VAULT ────────────────────────────────────────────── */
+const vault = {
+  render(body) {
+    const v = PHASE2_CONFIG.vault;
+    if(gameState.vaultStep === undefined) gameState.vaultStep = 0;
+    if(gameState.vaultStep === 0) {
+      // Step 1: pick category
+      body.innerHTML = `
+        <p style="font-family:var(--font-head);font-size:22px;text-align:center;margin-bottom:8px">${v.title}</p>
+        <p style="color:var(--muted);text-align:center;margin-bottom:28px">${v.subtitle}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px">
+          ${v.gifts.map(g => `
+            <div onclick="vault.pickGift('${g.id}')" style="padding:24px 16px;border-radius:var(--radius);background:var(--card);box-shadow:0 8px 24px var(--shadow);text-align:center;cursor:pointer;transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+              <div style="font-size:48px;margin-bottom:12px">${g.emoji}</div>
+              <div style="font-weight:700">${g.label}</div>
+            </div>`).join("")}
+        </div>`;
+      document.getElementById("btn-next").style.display = "none";
+    } else if(gameState.vaultStep === 1) {
+      // Step 2: pick design
+      const gift = v.gifts.find(g => g.id === gameState.vaultGift);
+      body.innerHTML = `
+        <p style="font-family:var(--font-head);font-size:20px;text-align:center;margin-bottom:6px">Choose your ${gift.label} design</p>
+        <p style="color:var(--muted);text-align:center;margin-bottom:24px">Pick the one you want.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px">
+          ${gift.designs.map(d => `
+            <div onclick="vault.pickDesign('${d.label}')" style="padding:20px 14px;border-radius:var(--radius);background:var(--card);box-shadow:0 8px 24px var(--shadow);text-align:center;cursor:pointer;transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+              ${d.src ? `<img src="${d.src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;margin-bottom:10px" alt="">` : `<div style="font-size:40px;margin-bottom:10px">${d.emoji}</div>`}
+              <div style="font-weight:700;font-size:13px">${d.label}</div>
+            </div>`).join("")}
+        </div>`;
+      document.getElementById("btn-next").style.display = "none";
+    } else if(gameState.vaultStep === 2) {
+      // Final screen
+      const gift = v.gifts.find(g => g.id === gameState.vaultGift);
+      body.innerHTML = `
+        <div class="completion-banner show">
+          <div class="big-emoji">${gift.emoji}</div>
+          <h3>${gift.label} — ${gameState.vaultDesign}</h3>
+          <p style="font-family:var(--font-head)">Selected. Noted. Ordered.</p>
+          <p style="color:var(--muted)">See you soon. 💕</p>
+        </div>`;
+      document.getElementById("btn-next").style.display = "none";
+    }
+    document.getElementById("modal-score").textContent = "";
+  },
+  pickGift(id) { gameState.vaultGift = id; gameState.vaultStep = 1; vault.render(document.getElementById("modal-body")); },
+  pickDesign(label) { gameState.vaultDesign = label; gameState.vaultStep = 2; vault.render(document.getElementById("modal-body")); },
+  next() {}
+};
+
+function openVault() {
+  currentFolder = { id:"vault", label:"Reward Vault", icon:"🎁", gameType:"vault", content: PHASE2_CONFIG.vault };
+  gameState = { vaultStep: 0 };
+  document.getElementById("modal-title").textContent = "🎁 Reward Vault";
+  document.getElementById("modal-score").textContent = "";
+  document.getElementById("btn-next").style.display = "none";
+  vault.render(document.getElementById("modal-body"));
+  document.getElementById("modal-overlay").classList.add("open");
+}
+
+/* ── Init ────────────────────────────────────────────────────── */
+renderHub();
+</script>
+</body>
+</html>
+

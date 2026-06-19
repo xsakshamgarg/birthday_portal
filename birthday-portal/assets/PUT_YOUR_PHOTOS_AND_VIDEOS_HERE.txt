@@ -1,0 +1,2 @@
+Drop your .jpg photos, .mp4 video, and .mp3 sound files in this folder.
+Then update the paths in config.js.
