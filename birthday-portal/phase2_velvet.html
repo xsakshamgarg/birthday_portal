@@ -64,8 +64,8 @@ body::before{
 
 /* ── Petals ──────────────────────────────────────── */
 .petal{
-  position:fixed; top:-20px; font-size:14px; pointer-events:none;
-  z-index:1; animation:petal-fall linear infinite; opacity:0.55;
+  position:fixed; top:-20px; font-size:16px; pointer-events:none;
+  z-index:1; animation:petal-fall linear infinite; opacity:0.65;
 }
 @keyframes petal-fall{
   0%  {transform:translateY(0) rotate(0deg) translateX(0);  opacity:.55}
@@ -699,14 +699,70 @@ body::before{
 .hidden{display:none!important}
 .fade-in{animation:fade-in .3s ease forwards}
 @keyframes fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Fullscreen Entry Overlay ────────────────────── */
+#fs-entry-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; cursor: pointer;
+}
+#fs-entry-overlay::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(199,125,255,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(232,160,191,0.18) 0%, transparent 55%);
+}
+.fs-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 6vw, 58px);
+  font-style: italic; font-weight: 600;
+  color: var(--blossom);
+  text-shadow: 0 0 40px rgba(232,160,191,0.55);
+  text-align: center; line-height: 1.2;
+  position: relative; z-index: 1;
+}
+.fs-sub {
+  color: var(--text-muted); font-size: 15px;
+  text-align: center; max-width: 320px; line-height: 1.6;
+  position: relative; z-index: 1;
+}
+.fs-tap-btn {
+  margin-top: 8px; padding: 16px 44px;
+  border: none; border-radius: 50px; cursor: pointer;
+  font: 700 16px var(--font-body);
+  background: linear-gradient(135deg, var(--blossom-d), var(--mauve-d));
+  color: #fff; letter-spacing: 0.5px;
+  box-shadow: 0 8px 32px rgba(199,125,255,0.4);
+  animation: fs-pulse 2s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes fs-pulse {
+  0%,100% { box-shadow: 0 8px 32px rgba(199,125,255,0.4); transform: scale(1); }
+  50%      { box-shadow: 0 14px 48px rgba(232,160,191,0.65); transform: scale(1.05); }
+}
+.fs-overlay-petal {
+  position: absolute; font-size: 16px; pointer-events: none;
+  animation: petal-fall linear infinite; opacity: 0.6;
+}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
+
+<div id="fs-entry-overlay">
+  <div class="fs-title">The Archive of Us 💕</div>
+  <div class="fs-sub">Three years of memories, games, jokes — all waiting inside.</div>
+  <button class="fs-tap-btn" onclick="enterFullscreenAndStart()">✨ Tap to Begin</button>
+</div>
+
 <script>
 (function(){
-  var petals=['🌸','🌺','✿','❀','🌷'];
-  for(var i=0;i<14;i++){
+  var petals=['🌸','🌺','✿','❀','🌷','🌸','🌺','✿','❀','🌷','💮'];
+  for(var i=0;i<25;i++){
     var p=document.createElement('span');
     p.className='petal';
     p.textContent=petals[i%petals.length];
@@ -718,7 +774,6 @@ body::before{
   }
 })();
 </script>
-
 
 
 <!-- Thumbnail strips: selected items appear here, distributed both sides -->
@@ -743,7 +798,7 @@ body::before{
 
 <!-- ═══════════ HUB SCREEN ═══════════ -->
 <div id="hub">
-  <h1 class="hub-title">The Archive of Us 📁</h1>
+  <h1 class="hub-title">The Archive of Us 💕</h1>
   <p class="hub-sub">Three years. Open any folder to begin. Complete all to unlock the Reward Vault.</p>
 
   <div class="folder-cluster" id="folder-cluster">
@@ -1226,7 +1281,7 @@ const PHASE2_CONFIG = {
   /* ══ REWARD VAULT ════════════════════════════════════════════ */
   vault: {
     title: "The Reward Vault 🎁",
-    subtitle: "You made it through the entire archive. Now pick what comes next.",
+    subtitle: "You made it through the entire archive. Now pick a gift for yourself.",
     /*
      * HOW TO ADD/EDIT GIFT OPTIONS:
      * Each gift has a label, emoji, and an array of designs.
@@ -1235,44 +1290,24 @@ const PHASE2_CONFIG = {
     gifts: [
       {
         id: "anklet",
-        emoji: "✨",
+        emoji: "💫",
         label: "Anklet",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A — Floral" },
-          { src: null, emoji: "⛓️", label: "Design B — Chain" },
-          { src: null, emoji: "💎", label: "Design C — Minimalist" },
-        ],
       },
       {
         id: "ring",
         emoji: "💍",
         label: "Ring",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A" },
-          { src: null, emoji: "💫", label: "Design B" },
-          { src: null, emoji: "🌙", label: "Design C" },
-        ],
-      },
-      {
-        id: "earrings",
-        emoji: "👂",
-        label: "Earrings",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A" },
-          { src: null, emoji: "⭕", label: "Design B — Hoops" },
-          { src: null, emoji: "💧", label: "Design C — Drops" },
-        ],
       },
       {
         id: "earphones",
         emoji: "🎧",
         label: "Earphones",
-        designs: [
-          { src: null, emoji: "⬛", label: "Design A — Black" },
-          { src: null, emoji: "🤍", label: "Design B — White" },
-          { src: null, emoji: "🌸", label: "Design C — Pink" },
-        ],
       },
+      {
+	id:"custom",
+	emoji:"🪄",
+	label:"Something Else"
+      },	
     ],
   },
 
@@ -1285,6 +1320,20 @@ const PHASE2_CONFIG = {
 let completedFolders = new Set();
 let currentFolder = null;
 let gameState = {};
+
+sessionStorage.setItem("wantFullscreen","true");
+
+window.addEventListener("load", async () => {
+  try{
+    if(
+      sessionStorage.getItem("wantFullscreen")==="true"
+      &&
+      !document.fullscreenElement
+    ){
+      await setTimeout(()=>{ document.documentElement.requestFullscreen().catch(()=>{});},300);
+     }
+  }catch(e){}
+});
 
 /* ── Render hub folders ──────────────────────────────────────── */
 function renderHub() {
@@ -1317,13 +1366,29 @@ function renderHub() {
   }
 }
 
+const DEBUG_UNLOCK_VAULT = true;
+
 function tryOpenVault() {
-  const allDone = PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
-  if (!allDone) {
-    alert("Complete all folders first to unlock the Reward Vault! 🔒");
-    return;
-  }
-  openVault();
+
+if(DEBUG_UNLOCK_VAULT){
+openVault();
+return;
+}
+
+const allDone =
+PHASE2_CONFIG.folders.every(
+f=>completedFolders.has(f.id)
+);
+
+if(!allDone){
+alert(
+"Complete all folders first 🔒"
+);
+return;
+}
+
+openVault();
+
 }
 
 /* ── Open a folder / game ────────────────────────────────────── */
@@ -2101,6 +2166,97 @@ function openVault() {
 
 /* ── Init ────────────────────────────────────────────────────── */
 renderHub();
+/* ── PHASE2 LANDING & FULLSCREEN────────────────────────────────────────────── */
+
+(function() {
+  const overlay =
+  document.getElementById(
+    'fs-entry-overlay'
+  );
+
+  if (!overlay) return;
+
+  const p = [
+    '🌸','🌺','✿','❀','🌷','💮'
+  ];
+
+  for (let i = 0; i < 20; i++) {
+
+    const el =
+    document.createElement('span');
+
+    el.className =
+    'fs-overlay-petal';
+
+    el.textContent =
+    p[i % p.length];
+
+    el.style.left =
+    Math.random() * 100 + 'vw';
+
+    el.style.top =
+    '-20px';
+
+    overlay.appendChild(el);
+
+  }
+})();
+
+function enterFullscreenAndStart() {
+
+  const overlay =
+  document.getElementById(
+    'fs-entry-overlay'
+  );
+
+  const el =
+  document.documentElement;
+
+  const dismiss = () => {
+
+    overlay.style.transition =
+    'opacity .65s ease';
+
+    overlay.style.opacity = '0';
+
+    setTimeout(
+      ()=>overlay.remove(),
+      700
+    );
+
+  };
+
+  const req =
+    el.requestFullscreen
+      ? el.requestFullscreen()
+      : null;
+
+  if (req && req.then)
+    req.then(dismiss)
+       .catch(dismiss);
+
+  else
+    dismiss();
+
+}
+
+document.addEventListener(
+  'keydown',
+  e => {
+
+    if (
+      (e.key === 'f' ||
+       e.key === 'F')
+      &&
+      document.getElementById(
+        'fs-entry-overlay'
+      )
+    ) {
+      enterFullscreenAndStart();
+    }
+
+  }
+);
 </script>
 </body>
 </html>
