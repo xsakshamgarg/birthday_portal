@@ -65,7 +65,7 @@ body::before{
 /* ── Petals ──────────────────────────────────────── */
 .petal{
   position:fixed; top:-20px; font-size:14px; pointer-events:none;
-  z-index:1; animation:petal-fall linear infinite; opacity:0.55;
+  z-index:1; animation:petal-fall linear infinite; opacity:0.75;
 }
 @keyframes petal-fall{
   0%  {transform:translateY(0) rotate(0deg) translateX(0);  opacity:.55}
@@ -699,26 +699,81 @@ body::before{
 .hidden{display:none!important}
 .fade-in{animation:fade-in .3s ease forwards}
 @keyframes fade-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── Fullscreen Entry Overlay ────────────────────── */
+#fs-entry-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px; cursor: pointer;
+}
+#fs-entry-overlay::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(199,125,255,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(232,160,191,0.18) 0%, transparent 55%);
+}
+.fs-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 6vw, 58px);
+  font-style: italic; font-weight: 600;
+  color: var(--blossom);
+  text-shadow: 0 0 40px rgba(232,160,191,0.55);
+  text-align: center; line-height: 1.2;
+  position: relative; z-index: 1;
+}
+.fs-sub {
+  color: var(--text-muted); font-size: 15px;
+  text-align: center; max-width: 320px; line-height: 1.6;
+  position: relative; z-index: 1;
+}
+.fs-tap-btn {
+  margin-top: 8px; padding: 16px 44px;
+  border: none; border-radius: 50px; cursor: pointer;
+  font: 700 16px var(--font-body);
+  background: linear-gradient(135deg, var(--blossom-d), var(--mauve-d));
+  color: #fff; letter-spacing: 0.5px;
+  box-shadow: 0 8px 32px rgba(199,125,255,0.4);
+  animation: fs-pulse 2s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes fs-pulse {
+  0%,100% { box-shadow: 0 8px 32px rgba(199,125,255,0.4); transform: scale(1); }
+  50%      { box-shadow: 0 14px 48px rgba(232,160,191,0.65); transform: scale(1.05); }
+}
+.fs-overlay-petal {
+  position: absolute; font-size: 16px; pointer-events: none;
+  animation: petal-fall linear infinite; opacity: 0.75;
+}
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
+
+
+<div id="fs-entry-overlay">
+  <div class="fs-title">The Archive of Us 💕</div>
+  <div class="fs-sub">Three years of memories, games, jokes — all waiting inside.</div>
+  <button class="fs-tap-btn" onclick="enterFullscreenAndStart()">✨ Tap to Begin</button>
+</div>
 
 <script>
 (function(){
   var petals=['🌸','🌺','✿','❀','🌷'];
-  for(var i=0;i<14;i++){
+  for(var i=0;i<28;i++){
     var p=document.createElement('span');
     p.className='petal';
     p.textContent=petals[i%petals.length];
     p.style.left=Math.random()*100+'vw';
     p.style.animationDuration=(8+Math.random()*10)+'s';
     p.style.animationDelay=(Math.random()*12)+'s';
-    p.style.fontSize=(10+Math.random()*10)+'px';
+    p.style.fontSize=(16+Math.random()*14)+'px';
     document.body.appendChild(p);
   }
 })();
 </script>
-
 
 
 <!-- Thumbnail strips: selected items appear here, distributed both sides -->
@@ -743,7 +798,7 @@ body::before{
 
 <!-- ═══════════ HUB SCREEN ═══════════ -->
 <div id="hub">
-  <h1 class="hub-title">The Archive of Us 📁</h1>
+  <h1 class="hub-title">The Archive of Us 💕</h1>
   <p class="hub-sub">Three years. Open any folder to begin. Complete all to unlock the Reward Vault.</p>
 
   <div class="folder-cluster" id="folder-cluster">
@@ -1226,53 +1281,17 @@ const PHASE2_CONFIG = {
   /* ══ REWARD VAULT ════════════════════════════════════════════ */
   vault: {
     title: "The Reward Vault 🎁",
-    subtitle: "You made it through the entire archive. Now pick what comes next.",
+    subtitle: "You made it through the entire archive. Now pick a gift for yourself.",
     /*
      * HOW TO ADD/EDIT GIFT OPTIONS:
      * Each gift has a label, emoji, and an array of designs.
      * Add product images to designs as src: "assets/ring1.jpg"
      */
     gifts: [
-      {
-        id: "anklet",
-        emoji: "✨",
-        label: "Anklet",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A — Floral" },
-          { src: null, emoji: "⛓️", label: "Design B — Chain" },
-          { src: null, emoji: "💎", label: "Design C — Minimalist" },
-        ],
-      },
-      {
-        id: "ring",
-        emoji: "💍",
-        label: "Ring",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A" },
-          { src: null, emoji: "💫", label: "Design B" },
-          { src: null, emoji: "🌙", label: "Design C" },
-        ],
-      },
-      {
-        id: "earrings",
-        emoji: "👂",
-        label: "Earrings",
-        designs: [
-          { src: null, emoji: "🌸", label: "Design A" },
-          { src: null, emoji: "⭕", label: "Design B — Hoops" },
-          { src: null, emoji: "💧", label: "Design C — Drops" },
-        ],
-      },
-      {
-        id: "earphones",
-        emoji: "🎧",
-        label: "Earphones",
-        designs: [
-          { src: null, emoji: "⬛", label: "Design A — Black" },
-          { src: null, emoji: "🤍", label: "Design B — White" },
-          { src: null, emoji: "🌸", label: "Design C — Pink" },
-        ],
-      },
+      { id: "anklet",    emoji: "✨", label: "Anklet" },
+      { id: "ring",      emoji: "💍", label: "Ring" },
+      { id: "earphones", emoji: "🎧", label: "Earphones" },
+      { id: "custom",    emoji: "🌟", label: "Something Else…" },
     ],
   },
 
@@ -1285,6 +1304,20 @@ const PHASE2_CONFIG = {
 let completedFolders = new Set();
 let currentFolder = null;
 let gameState = {};
+
+sessionStorage.setItem("wantFullscreen","true");
+
+window.addEventListener("load", async () => {
+  try{
+    if(
+      sessionStorage.getItem("wantFullscreen")==="true"
+      &&
+      !document.fullscreenElement
+    ){
+      await setTimeout(()=>{ document.documentElement.requestFullscreen().catch(()=>{});},300);
+     }
+  }catch(e){}
+});
 
 /* ── Render hub folders ──────────────────────────────────────── */
 function renderHub() {
@@ -1303,8 +1336,8 @@ function renderHub() {
     div.onclick = () => openFolder(folder.id);
     cluster.appendChild(div);
   });
-  // Update vault
-  const allDone = PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
+  // Update vault — set DEBUG_UNLOCK_VAULT=true to always show unlocked (for testing)
+  const allDone = DEBUG_UNLOCK_VAULT || PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
   const vf = document.getElementById("vault-folder");
   const vl = document.getElementById("vault-label");
   if (allDone) {
@@ -1317,13 +1350,29 @@ function renderHub() {
   }
 }
 
+const DEBUG_UNLOCK_VAULT = true; // ← set to false before going live
+
 function tryOpenVault() {
-  const allDone = PHASE2_CONFIG.folders.every(f => completedFolders.has(f.id));
-  if (!allDone) {
-    alert("Complete all folders first to unlock the Reward Vault! 🔒");
-    return;
-  }
-  openVault();
+
+if(DEBUG_UNLOCK_VAULT){
+openVault();
+return;
+}
+
+const allDone =
+PHASE2_CONFIG.folders.every(
+f=>completedFolders.has(f.id)
+);
+
+if(!allDone){
+alert(
+"Complete all folders first 🔒"
+);
+return;
+}
+
+openVault();
+
 }
 
 /* ── Open a folder / game ────────────────────────────────────── */
@@ -2042,50 +2091,133 @@ const hiddenstats = {
 const vault = {
   render(body) {
     const v = PHASE2_CONFIG.vault;
-    if(gameState.vaultStep === undefined) gameState.vaultStep = 0;
-    if(gameState.vaultStep === 0) {
-      // Step 1: pick category
+    if (gameState.vaultStep === undefined) gameState.vaultStep = 0;
+
+    if (gameState.vaultStep === 0) {
+      // Flat one-tap gift selection — no nested designs
       body.innerHTML = `
-        <p style="font-family:var(--font-head);font-size:22px;text-align:center;margin-bottom:8px">${v.title}</p>
-        <p style="color:var(--muted);text-align:center;margin-bottom:28px">${v.subtitle}</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px">
+        <p style="font-family:var(--font-head);font-size:22px;text-align:center;margin-bottom:8px;font-style:italic;color:var(--blossom)">${v.title}</p>
+        <p style="color:var(--text-muted);text-align:center;margin-bottom:28px;font-size:15px">${v.subtitle}</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:16px">
           ${v.gifts.map(g => `
-            <div onclick="vault.pickGift('${g.id}')" style="padding:24px 16px;border-radius:var(--radius);background:var(--card);box-shadow:0 8px 24px var(--shadow);text-align:center;cursor:pointer;transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-              <div style="font-size:48px;margin-bottom:12px">${g.emoji}</div>
-              <div style="font-weight:700">${g.label}</div>
+            <div onclick="vault.pickGift('${g.id}')"
+              style="padding:28px 16px;border-radius:var(--radius);background:var(--card);
+                     box-shadow:0 8px 24px var(--shadow),0 0 0 1px var(--border);
+                     text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.transform='translateY(-5px)';this.style.boxShadow='0 16px 40px var(--shadow),0 0 0 1px rgba(232,160,191,0.4)'"
+              onmouseout="this.style.transform='';this.style.boxShadow='0 8px 24px var(--shadow),0 0 0 1px var(--border)'">
+              <div style="font-size:52px;margin-bottom:14px">${g.emoji}</div>
+              <div style="font-weight:700;font-size:16px;color:var(--text)">${g.label}</div>
             </div>`).join("")}
         </div>`;
       document.getElementById("btn-next").style.display = "none";
-    } else if(gameState.vaultStep === 1) {
-      // Step 2: pick design
-      const gift = v.gifts.find(g => g.id === gameState.vaultGift);
+
+    } else if (gameState.vaultStep === 1 && gameState.vaultGift === "custom") {
+      // Free-text input for custom gift
       body.innerHTML = `
-        <p style="font-family:var(--font-head);font-size:20px;text-align:center;margin-bottom:6px">Choose your ${gift.label} design</p>
-        <p style="color:var(--muted);text-align:center;margin-bottom:24px">Pick the one you want.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px">
-          ${gift.designs.map(d => `
-            <div onclick="vault.pickDesign('${d.label}')" style="padding:20px 14px;border-radius:var(--radius);background:var(--card);box-shadow:0 8px 24px var(--shadow);text-align:center;cursor:pointer;transition:.2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-              ${d.src ? `<img src="${d.src}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;margin-bottom:10px" alt="">` : `<div style="font-size:40px;margin-bottom:10px">${d.emoji}</div>`}
-              <div style="font-weight:700;font-size:13px">${d.label}</div>
-            </div>`).join("")}
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px 0">
+          <div style="font-size:56px">🌟</div>
+          <p style="font-family:var(--font-head);font-size:22px;font-style:italic;color:var(--blossom);text-align:center">
+            What would you like?
+          </p>
+          <p style="color:var(--text-muted);font-size:14px;text-align:center;max-width:360px;line-height:1.6">
+            Type anything you'd like as your gift — jewellery, experience, accessory, anything at all 💕
+          </p>
+          <textarea id="custom-gift-input"
+            placeholder="e.g. A bracelet, perfume, our next date spot…"
+            style="width:100%;max-width:420px;padding:16px;border-radius:14px;
+                   background:var(--surface-2);color:var(--text);
+                   border:1.5px solid var(--border);font-family:var(--font-body);
+                   font-size:15px;resize:none;min-height:100px;outline:none;
+                   transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blossom)'"
+            onblur="this.style.borderColor='var(--border)'"
+            oninput="vault.onCustomInput(this.value)"
+          ></textarea>
+          <button id="custom-confirm-btn"
+            onclick="vault.confirmCustom()"
+            style="padding:14px 40px;border-radius:50px;border:none;cursor:pointer;
+                   font:700 15px var(--font-body);
+                   background:linear-gradient(135deg,var(--blossom-d),var(--mauve-d));
+                   color:#fff;opacity:.4;pointer-events:none;transition:.2s;">
+            Confirm Gift ✨
+          </button>
         </div>`;
       document.getElementById("btn-next").style.display = "none";
-    } else if(gameState.vaultStep === 2) {
-      // Final screen
+
+    } else if (gameState.vaultStep === 2) {
+      // Final confirmation screen
       const gift = v.gifts.find(g => g.id === gameState.vaultGift);
+      const label = gameState.vaultGift === "custom" ? gameState.vaultCustomText : gift.label;
+      const emoji = gameState.vaultGift === "custom" ? "🌟" : gift.emoji;
       body.innerHTML = `
         <div class="completion-banner show">
-          <div class="big-emoji">${gift.emoji}</div>
-          <h3>${gift.label} — ${gameState.vaultDesign}</h3>
-          <p style="font-family:var(--font-head)">Selected. Noted. Ordered.</p>
-          <p style="color:var(--muted)">See you soon. 💕</p>
+          <div class="big-emoji">${emoji}</div>
+          <h3 style="color:var(--blossom)">${label}</h3>
+          <p style="font-family:var(--font-head);font-style:italic">Selected. Noted. Coming soon. 💕</p>
+          <p style="color:var(--text-muted);font-size:14px;margin-top:6px">Your choice has been sent — expect your gift soon.</p>
+          <div id="email-status" style="margin-top:14px;font-size:13px;color:var(--gold)"></div>
         </div>`;
       document.getElementById("btn-next").style.display = "none";
+      vault.sendEmail(emoji, label);
     }
     document.getElementById("modal-score").textContent = "";
   },
-  pickGift(id) { gameState.vaultGift = id; gameState.vaultStep = 1; vault.render(document.getElementById("modal-body")); },
-  pickDesign(label) { gameState.vaultDesign = label; gameState.vaultStep = 2; vault.render(document.getElementById("modal-body")); },
+
+  onCustomInput(val) {
+    const btn = document.getElementById("custom-confirm-btn");
+    if (!btn) return;
+    if (val.trim().length > 2) {
+      btn.style.opacity = "1"; btn.style.pointerEvents = "auto";
+      gameState.vaultCustomText = val.trim();
+    } else {
+      btn.style.opacity = ".4"; btn.style.pointerEvents = "none";
+    }
+  },
+
+  confirmCustom() {
+    gameState.vaultStep = 2;
+    vault.render(document.getElementById("modal-body"));
+  },
+
+  pickGift(id) {
+    gameState.vaultGift = id;
+    gameState.vaultStep = (id === "custom") ? 1 : 2;
+    vault.render(document.getElementById("modal-body"));
+  },
+
+  sendEmail(emoji, giftName) {
+    const statusEl = document.getElementById("email-status");
+    /*
+     * EMAIL SETUP — takes 5 minutes:
+     * 1. Go to emailjs.com → sign up free
+     * 2. Add Email Service: Connect your Gmail → name it  service_archiveofus
+     * 3. Create Email Template → Template ID: template_gift_notify
+     *    Template body example:
+     *      She chose: {{gift_emoji}} {{gift_name}}
+     *      Time: {{sent_at}}
+     * 4. Go to Account → API Keys → copy your Public Key
+     * 5. Paste it below where it says YOUR_EMAILJS_PUBLIC_KEY
+     */
+    const publicKey  = "oH4WeS7PyKPC2subG"; // ← paste here
+    const serviceId  = "service_archiveofus";
+    const templateId = "template_gift_notify";
+    const params = {
+      to_email:   "610sakshamgarg@gmail.com",
+      gift_name:  giftName,
+      gift_emoji: emoji,
+      sent_at:    new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    };
+    if (typeof emailjs === "undefined") {
+      if (statusEl) statusEl.textContent = "📧 Gift noted locally (EmailJS not loaded)";
+      return;
+    }
+    emailjs.init(publicKey);
+    emailjs.send(serviceId, templateId, params)
+      .then(() => { if (statusEl) statusEl.textContent = "📧 Notification sent! ✓"; })
+      .catch(() => { if (statusEl) statusEl.textContent = "📧 Gift noted — will update you soon."; });
+  },
+
   next() {}
 };
 
@@ -2101,6 +2233,97 @@ function openVault() {
 
 /* ── Init ────────────────────────────────────────────────────── */
 renderHub();
+/* ── PHASE2 LANDING & FULLSCREEN────────────────────────────────────────────── */
+
+(function() {
+  const overlay =
+  document.getElementById(
+    'fs-entry-overlay'
+  );
+
+  if (!overlay) return;
+
+  const p = [
+    '🌸','🌺','✿','❀','🌷','💮'
+  ];
+
+  for (let i = 0; i < 20; i++) {
+
+    const el =
+    document.createElement('span');
+
+    el.className =
+    'fs-overlay-petal';
+
+    el.textContent =
+    p[i % p.length];
+
+    el.style.left =
+    Math.random() * 100 + 'vw';
+
+    el.style.top =
+    '-20px';
+
+    overlay.appendChild(el);
+
+  }
+})();
+
+function enterFullscreenAndStart() {
+
+  const overlay =
+  document.getElementById(
+    'fs-entry-overlay'
+  );
+
+  const el =
+  document.documentElement;
+
+  const dismiss = () => {
+
+    overlay.style.transition =
+    'opacity .65s ease';
+
+    overlay.style.opacity = '0';
+
+    setTimeout(
+      ()=>overlay.remove(),
+      700
+    );
+
+  };
+
+  const req =
+    el.requestFullscreen
+      ? el.requestFullscreen()
+      : null;
+
+  if (req && req.then)
+    req.then(dismiss)
+       .catch(dismiss);
+
+  else
+    dismiss();
+
+}
+
+document.addEventListener(
+  'keydown',
+  e => {
+
+    if (
+      (e.key === 'f' ||
+       e.key === 'F')
+      &&
+      document.getElementById(
+        'fs-entry-overlay'
+      )
+    ) {
+      enterFullscreenAndStart();
+    }
+
+  }
+);
 </script>
 </body>
 </html>
